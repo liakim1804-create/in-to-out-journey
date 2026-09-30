@@ -983,10 +983,10 @@ h1 {
   line-height: 1.4;
   letter-spacing: -.01em;
 }
-.wf__modes,.wf__hero,.wf__card,.wf__foot {
+.wf__mode,.wf__hero,.wf__card,.wf__foot {
   position: relative;
 }
-.wf__modes>.wf__pin,.wf__foot>.wf__pin {
+.wf__foot>.wf__pin {
   top: -.2cqw;
   left: -2cqw;
 }
@@ -1061,25 +1061,46 @@ h1 {
 .wf__btn--accent {
   background: var(--amber);
 }
-.wf__modes {
-  display: flex;
-  gap: 3cqw;
-  padding-bottom: 1.2cqw;
-}
-.wf__modegroup {
+.wf__barleft {
   display: flex;
   align-items: center;
   gap: 2cqw;
-  color: var(--muted);
+}
+.wf__mode {
+  display: inline-flex;
+  align-items: center;
+  gap: .7cqw;
+  height: 2.6cqw;
+  padding: 0 1cqw 0 .6cqw;
+  border-radius: var(--rad);
+  background: var(--fill-2);
   font-family: var(--gt);
   font-size: 1cqw;
   letter-spacing: .06em;
 }
-.wf__modegroup .is-active {
+.wf__mode b {
+  font-weight: 400;
+}
+.wf__chev {
+  margin-left: .3cqw;
+  color: var(--muted);
+  font-style: normal;
+  font-size: .8cqw;
+}
+.wf__submenu {
+  display: flex;
+  gap: 2.4cqw;
+  padding-bottom: 1.2cqw;
+  color: var(--muted);
+  font-size: 1cqw;
+}
+.wf__submenu span {
   position: relative;
+}
+.wf__submenu .is-active {
   color: var(--fg);
 }
-.wf__modegroup .is-active:after {
+.wf__submenu .is-active:after {
   content: "";
   position: absolute;
   right: 0;
@@ -1111,7 +1132,7 @@ h1 {
   grid-template-columns: 1.9fr 1fr;
 }
 .wf__body--prepare {
-  grid-template-columns: 1fr 1.5fr 1fr;
+  grid-template-columns: 1fr 2fr;
 }
 .wf__hero {
   display: grid;
@@ -1358,24 +1379,135 @@ h1 {
   font-size: .85cqw;
   text-decoration: underline;
 }
-.wf__qr {
-  align-self: center;
-  width: 55%;
-  aspect-ratio: 1;
-  background: repeating-conic-gradient(rgba(233,232,222,.22) 0 25%,transparent 0 50%) 0 0/1.2cqw 1.2cqw;
+.wf {
+  --box: #252524;
+  --fill: var(--box);
+  --fill-2: var(--box);
 }
-.wf__send .wf__btn {
-  align-self: flex-start;
-  margin-top: auto;
+.wf__btn,.wf__btn--ghost,.wf__btn--accent {
+  background: var(--box);
+  color: var(--fg);
 }
-.wf__notice {
+.wf__btn--ghost {
+  color: var(--muted);
+}
+.wf__tag,.wf__tag--accent {
+  padding: 0;
+  background: none;
+  color: var(--muted);
+}
+.wf__tag--accent {
+  color: var(--fg);
+}
+.wf__live {
+  padding: 0;
+  background: none;
+  color: var(--fg);
+}
+.wf__submenu .is-active:after {
+  background: var(--fg);
+}
+.wf__card>.wf__pin {
+  position: static;
+  display: inline-grid;
+  margin-bottom: .2cqw;
+}
+.wf__card,.wf__card--accent {
+  padding: 0;
+  background: none;
+}
+.wf__check li {
+  background: var(--box);
+}
+.wf__checkbox {
+  background: var(--surface);
+}
+.wf__check .is-done .wf__checkbox {
+  background: var(--fg);
+}
+.wf__body--home {
+  grid-template-columns: 1fr;
+}
+.wf__heroinfo {
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2cqw;
+}
+.wf__herotext {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: .7cqw;
+  min-width: 0;
+}
+.wf__herotext .wf__meta {
+  margin-left: auto;
+}
+.wf__resize {
+  position: absolute;
+  top: 1cqw;
+  right: 1cqw;
+  width: 1.8cqw;
+  height: 1.8cqw;
+  fill: none;
+  stroke: var(--fg);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.wf__toast {
+  position: relative;
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: .6cqw;
+  width: 22cqw;
+  padding: 1cqw 1.2cqw;
+  border-radius: var(--rad);
+  background: var(--box);
+}
+.wf__toast .wf__text {
+  font-size: .95cqw;
+}
+.wf__textbtn {
+  font-size: .85cqw;
+  color: var(--fg);
+  text-decoration: underline;
+  text-underline-offset: .25em;
+}
+.wf__textbtn--muted {
+  color: var(--muted);
+}
+.wf__send {
+  position: relative;
+  gap: .6cqw;
+}
+.wf__send svg {
+  width: 1.1cqw;
+  height: 1.1cqw;
+  fill: none;
+  stroke: var(--fg);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+}
+.wf__mini {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 1cqw;
-  padding: 1cqw 1.4cqw;
-  border-radius: var(--rad);
-  background: var(--fill);
+}
+.wf__minibar {
+  position: relative;
+  flex: 1;
+  height: .3cqw;
+  background: var(--box);
+}
+.wf__minibar i {
+  position: absolute;
+  top: -.4cqw;
+  width: 2px;
+  height: 1.1cqw;
+  background: var(--fg);
 }
 .wfs__notes {
   display: grid;
@@ -1876,4 +2008,15 @@ h1 {
   .mode__track {
     transition: none;
   }
+}
+.figcap,.figcap body {
+  overflow: hidden;
+}
+.figcap .mode__media {
+  overflow: hidden;
+  clip-path: none;
+  margin-right: calc(-1 * 0px);
+}
+.figcap .mode {
+  overflow: hidden;
 }
