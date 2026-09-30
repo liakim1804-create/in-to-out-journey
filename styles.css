@@ -266,10 +266,10 @@
   --earth-brown: #35261e;
   --bg: var(--warm-black);
   --surface: var(--dark-charcoal);
-  --fg: var(--warm-ivory);
+  --fg: #fff;
   --amber: var(--flight-amber);
-  --muted: rgba(233,232,222,.6);
-  --line: rgba(233,232,222,.14);
+  --muted: rgba(255,255,255,.6);
+  --line: rgba(255,255,255,.14);
   --u: calc(100vw / 1920);
   --gutter: calc(184 * var(--u));
   --gt: "GT America Ext","Helvetica Neue",Arial,sans-serif;
@@ -991,7 +991,7 @@ h1 {
   overflow: hidden;
   background: var(--surface);
   border-radius: .4cqw;
-  color: rgba(233,232,222,.88);
+  color: rgba(255,255,255,.88);
   font-size: 1cqw;
   font-weight: 300;
   line-height: 1.4;
