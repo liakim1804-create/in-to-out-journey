@@ -303,27 +303,26 @@
   }
 
   // 히어로 모드 — 창문 히어로
-  // 로딩: 벽이 살짝 다가오며 블라인드가 올라간 뒤 로고가 흐림에서 또렷하게 나타난다 (그동안 스크롤을 잠근다)
+  // 로딩: 벽이 살짝 다가오며 로고가 흐림에서 또렷하게 나타난다 (그동안 스크롤을 잠근다)
   // 스크롤: 기내 벽이 창문 중심으로 커지며 화면 밖으로 빠지고, 밤하늘만 남는다
   function setupHero() {
     const hero = $(".intro-hero", intro);
     if (!hero) return;
     const el = {
       sky: $(".wh-sky", hero), cabin: $(".wh-cabin", hero),
-      shade: $(".wh-shade", hero), logo: $(".wh-logo", hero), vignette: $(".wh-vignette", hero), fade: $(".wh-fade", hero),
+      logo: $(".wh-logo", hero), vignette: $(".wh-vignette", hero), fade: $(".wh-fade", hero),
     };
     if (reduce || !hasGsap) return;
     initLenis();
     html.classList.add("intro-hero-motion");
 
     const ZOOM = 4; // 끝에서 창문 배율 — 유리가 화면 폭을 넉넉히 넘고 창틀이 모두 빠지는 값
-    const s = { p: 0, settle: 1.05, shade: 0, logo: 0 };
+    const s = { p: 0, settle: 1.05, logo: 0 };
     function render() {
       const p = s.p;
       // 배율을 지수로 키워야 다가가는 속도가 일정하게 느껴진다
       el.cabin.style.transform = `scale(${(s.settle * Math.pow(ZOOM, p)).toFixed(4)})`;
       el.sky.style.transform = `scale(${(1.04 + 0.1 * p).toFixed(4)})`;
-      el.shade.style.transform = `translateY(${(-92 * s.shade).toFixed(2)}%)`;
       el.logo.style.opacity = s.logo.toFixed(3);
       el.logo.style.filter = s.logo < 1 ? `blur(${((1 - s.logo) * 18).toFixed(2)}px)` : "none";
       el.logo.style.transform = `translate(-50%, -50%) scale(${(1 + 0.08 * (1 - s.logo) + 0.1 * p).toFixed(4)})`;
@@ -348,11 +347,9 @@
     lenis?.stop();
     const imgs = [...hero.querySelectorAll("img")];
     Promise.all(imgs.map((i) => (i.decode ? i.decode().catch(() => {}) : Promise.resolve()))).then(() => {
-      const io = "power3.inOut";
       gsap.timeline({ delay: 0.6, onUpdate: render, onComplete: () => lenis?.start() })
         .to(s, { settle: 1, duration: 2.6, ease: "power2.out" }, 0)
-        .to(s, { shade: 1, duration: 1.8, ease: io }, 0.5)
-        .to(s, { logo: 1, duration: 1.4, ease: "power2.out" }, 1.6); // 흐림은 로고 글자에만
+        .to(s, { logo: 1, duration: 1.4, ease: "power2.out" }, 0.6); // 흐림은 로고 글자에만
     });
   }
 

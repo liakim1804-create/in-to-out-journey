@@ -78,7 +78,7 @@ html:not(.intro-active) .intro-nav { opacity: 0; visibility: hidden; }
 .is-reduced .intro.is-end .intro__invite { opacity: 0; }
 
 /* ── 히어로 모드 (INTRO_MODE: "hero") — 창문 히어로 ────────────────────────────
-   층: 밤하늘(sky) → 블라인드(유리 안) → 기내 벽(유리를 뚫은 창문 이미지) → 비네팅 → 로고
+   층: 밤하늘(sky) → 기내 벽(유리를 뚫은 창문 이미지) → 비네팅 → 로고
    창문 이미지(3840×2160)와 같은 비율의 상자가 화면을 덮고, 안쪽 위치는 모두 이미지 기준 %로 잡는다.
    확대할 때 낮은 해상도로 굳지 않도록 will-change: transform을 쓰지 않는다. */
 .intro-hero { position: relative; height: 300vh; background: #030304; }
@@ -146,5 +146,4 @@ html:not(.intro-seq) .intro__stage { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   .intro-hero { height: 100vh; }
-  .wh-shade { transform: translateY(-92%); }
 }
