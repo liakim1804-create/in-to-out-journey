@@ -1,0 +1,27 @@
+/* 제목 크기 위계 — apple.com/kr/macbook-pro 실측 (docs/typography-mbp-measured.raw.json)
+   최대 크기는 히어로 한 번만. 크기·행간만 정하고 글꼴·굵기는 기존 토큰을 따른다
+     히어로   headline-super                 80 / 64 / 48px · 1.15 / 1.1719 / 1.1875
+     큰 선언  marquee-headline-base          64 / 56 / 32px · 1.1719 / 1.1787 / 1.2188
+     소제목   product-stories-subsection     56 / 48 / 32px · 1.1787 / 1.1875 / 1.2188
+     섹션     section-header-headline        48 / 40 / 32px · 1.1875 / 1.2 / 1.2188     */
+:root {
+  --mbp-hero: 80px; --mbp-hero-lh: 1.15;
+  --mbp-marquee: 64px; --mbp-marquee-lh: 1.1719;
+  --mbp-sub: 56px; --mbp-sub-lh: 1.1787;
+  --mbp-section: 48px; --mbp-section-lh: 1.1875;
+}
+@media (max-width: 1068px) { :root { --mbp-hero: 64px; --mbp-hero-lh: 1.1719; --mbp-marquee: 56px; --mbp-marquee-lh: 1.1787; --mbp-sub: 48px; --mbp-sub-lh: 1.1875; --mbp-section: 40px; --mbp-section-lh: 1.2; } }
+@media (max-width: 734px) { :root { --mbp-hero: 48px; --mbp-hero-lh: 1.1875; --mbp-marquee: 32px; --mbp-marquee-lh: 1.2188; --mbp-sub: 32px; --mbp-sub-lh: 1.2188; --mbp-section: 32px; --mbp-section-lh: 1.2188; } }
+
+/* 히어로 — 인트로 한 곳 */
+.intro-hero__title { font-size: var(--mbp-hero) !important; line-height: var(--mbp-hero-lh) !important; letter-spacing: normal !important; }
+/* 큰 선언 — 콘셉트 선언 · IN TO OUT JOURNEY · 착륙 순간 · 여행지 도착 · 예약 */
+:is(#overview-title, #journey-message-title, .landing-copy strong, #travel-title, #booking-title) { font-size: var(--mbp-marquee) !important; line-height: var(--mbp-marquee-lh) !important; letter-spacing: normal !important; }
+/* 소제목 — 기내의 시작 */
+#hero-title { font-size: var(--mbp-sub) !important; line-height: var(--mbp-sub-lh) !important; letter-spacing: normal !important; }
+/* 섹션 — 나머지 전부 (숫자 증명 포함) */
+:is(#enjoy-title, #mode-title, #rest-title, #concept-title, #features-title, #prepare-title, #proof-title, #compare-title, #benefits-title, #cabins-title) { font-size: var(--mbp-section) !important; line-height: var(--mbp-section-lh) !important; letter-spacing: normal !important; }
+
+/* 제목과 설명 사이 — 브라우저 기본 여백(.83em) 대신 .42em으로 좁힌다 */
+:is(#overview-title, #enjoy-title, #rest-title, #compare-title, #booking-title, #mode-title, #concept-title, #features-title, #prepare-title, #proof-title, #benefits-title, #cabins-title, #travel-title, #hero-title) { margin-bottom: .42em !important; }
+.journey-message__title p { margin-top: 14px !important; }

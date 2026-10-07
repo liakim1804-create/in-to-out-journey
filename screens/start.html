@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MOMEN IFE — Start</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="proto.css?v=1006215408">
+<style>
+/* 시작 화면 — 탑승 직후 언어와 모드를 고른다 */
+.stage::before {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  background: radial-gradient(1100px 520px at 50% -8%, rgba(225, 169, 116, .16), transparent 70%),
+              linear-gradient(180deg, #050607 0%, var(--c-950) 50%, var(--c-900) 100%);
+}
+.topbar { position: absolute; left: 64px; right: 64px; top: 40px; height: 56px; display: flex; align-items: center; justify-content: space-between; }
+.logo { font: 700 22px/1 var(--font); letter-spacing: .3em; }
+.langs { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center; }
+.langs button { position: relative; padding: 10px 28px; font: 500 17px/1.2 var(--font); letter-spacing: -0.01em; color: var(--text-3); transition: color .2s var(--ease); }
+.langs button + button::before { content: ""; position: absolute; left: 0; top: 50%; width: 1px; height: 16px; margin-top: -8px; background: var(--c-700); }
+.langs button:hover { color: var(--text-2); }
+.langs button[aria-pressed="true"] { color: var(--text-1); font-weight: 600; }
+.settings { width: 52px; height: 52px; }
+.settings svg { width: 22px; height: 22px; }
+
+.welcome { position: absolute; left: 0; right: 0; top: 196px; text-align: center; }
+.welcome h1 { font: var(--t-hero); letter-spacing: -0.035em; }
+.welcome h1 .seat { font-weight: 700; }
+.welcome h1 .honor { font-weight: 400; color: var(--text-2); }
+.welcome p { margin-top: 26px; font: 400 20px/1.6 var(--font); letter-spacing: -0.012em; color: var(--text-2); }
+
+/* 모드 — IN 3 + OUT 2 */
+.groups { position: absolute; left: 64px; right: 64px; bottom: 64px; display: grid; grid-template-columns: 3fr 2fr; gap: 40px; }
+.group__head { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; font: var(--t-label); letter-spacing: .09em; color: var(--text-3); }
+.group__head::after { content: ""; flex: 1; height: 1px; background: var(--hairline); }
+.group__list { display: grid; gap: 16px; }
+.group--in .group__list { grid-template-columns: repeat(3, 1fr); }
+.group--out .group__list { grid-template-columns: repeat(2, 1fr); }
+.mode {
+  position: relative; height: 420px; padding: 30px 26px 26px; border-radius: var(--r-lg); overflow: hidden; text-align: left;
+  display: flex; flex-direction: column; background: var(--c-850); box-shadow: inset 0 0 0 var(--hair, 1px) var(--hairline);
+  transition: box-shadow .35s var(--ease);
+}
+.mode img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .45; transition: opacity .4s var(--ease), transform .7s var(--ease); }
+.mode::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(9, 10, 12, .92) 0%, rgba(9, 10, 12, .55) 40%, rgba(9, 10, 12, .2) 64%, rgba(9, 10, 12, .75) 100%); }
+.mode > *:not(img) { position: relative; z-index: 1; }
+.mode:hover img { opacity: .6; transform: scale(1.04); }
+.mode.is-selected { box-shadow: var(--sel), 0 30px 70px -30px rgba(225, 169, 116, .55); }
+.mode.is-selected img { opacity: .72; }
+.mode__en { font: var(--t-label); letter-spacing: .1em; color: var(--text-3); display: flex; align-items: center; gap: 8px; }
+.mode.is-selected .mode__en { color: var(--a-200); }
+.mode.is-selected .mode__en::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--a-400); box-shadow: 0 0 10px var(--a-400); }
+.mode__lead { margin-top: 18px; font: 400 16px/1.5 var(--font); letter-spacing: -0.01em; color: var(--text-2); }
+.mode__name { margin-top: 6px; font: 600 28px/1.25 var(--font); letter-spacing: -0.028em; }
+.go {
+  margin-top: auto; width: 56px; height: 56px; border-radius: 16px; display: grid; place-items: center;
+  background: rgba(9, 10, 12, .6); box-shadow: inset 0 0 0 var(--hair, 1px) var(--hairline);
+  -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); transition: background .25s var(--ease), color .25s var(--ease);
+}
+.go svg { width: 22px; height: 22px; }
+.mode.is-selected .go { background: var(--c-50); color: var(--c-950); box-shadow: none; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 2.8v2.4M12 18.8v2.4M21.2 12h-2.4M5.2 12H2.8M18.5 5.5l-1.7 1.7M7.2 16.8l-1.7 1.7M18.5 18.5l-1.7-1.7M7.2 7.2 5.5 5.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  </defs>
+</svg>
+
+<main class="stage" id="stage" aria-label="MOMEN">
+  <header class="topbar">
+    <div class="logo" aria-label="MOMEN">MOMEN</div>
+    <nav class="langs" aria-label="Language" data-langs></nav>
+    <button class="round-btn settings" type="button" data-i18n-label="settings" data-settings><svg><use href="#i-gear"/></svg></button>
+  </header>
+
+  <section class="welcome">
+    <h1 data-i18n="welcome_html"></h1>
+    <p data-i18n="welcome_sub"></p>
+  </section>
+
+  <div class="groups" role="radiogroup" aria-label="Mode">
+    <section class="group group--in"><div class="group__list" data-list="in"></div></section>
+    <section class="group group--out"><div class="group__list" data-list="out"></div></section>
+  </div>
+</main>
+
+<script src="proto.js?v=1006215408"></script>
+<script>
+(function () {
+  "use strict";
+  const P = window.Proto;
+  const IMG = { ENJOY: "enjoy-amber", REST: "rest-amber", WORK: "board-amber", PREPARE: "landing-airport", TRAVEL: "paris" };
+
+  // 언어 버튼
+  const langs = document.querySelector("[data-langs]");
+  langs.innerHTML = P.LANGS.map((l) => `<button type="button" lang="${l}" data-lang="${l}">${P.LANG_NAMES[l]}</button>`).join("");
+  const markLang = () => langs.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.lang === P.state.lang)));
+  langs.addEventListener("click", (e) => { const b = e.target.closest("[data-lang]"); if (b) P.setLang(b.dataset.lang); });
+
+  // 모드 카드
+  P.MODES.forEach((m) => {
+    const out = P.OUT_MODES.includes(m);
+    document.querySelector(`[data-list="${out ? "out" : "in"}"]`).insertAdjacentHTML("beforeend", `
+      <button class="mode" type="button" role="radio" data-mode="${m}">
+        <img src="../assets/scenes/${IMG[m]}.webp" alt="">
+        <span class="mode__en">${m}</span>
+        <span class="mode__lead" data-i18n="lead_${m}"></span>
+        <span class="mode__name" data-i18n="name_${m}"></span>
+        <span class="go" data-go><svg><use href="#i-arrow"/></svg></span>
+      </button>`);
+  });
+  const cards = [...document.querySelectorAll(".mode")];
+  const select = (m) => { P.state.mode = m; P.save(); cards.forEach((c) => { const on = c.dataset.mode === m; c.classList.toggle("is-selected", on); c.setAttribute("aria-checked", String(on)); }); };
+  const enter = (m) => { select(m); location.href = `home.html?mode=${m}`; };
+  cards.forEach((c) => c.addEventListener("click", (e) => {
+    // 화살표를 누르거나, 이미 고른 카드를 다시 누르면 홈으로
+    if (e.target.closest("[data-go]") || c.classList.contains("is-selected")) enter(c.dataset.mode); else select(c.dataset.mode);
+  }));
+
+  document.querySelector("[data-settings]").addEventListener("click", P.openSettings);
+  addEventListener("proto:lang", markLang);
+
+  P.init();
+  select(P.state.mode in IMG ? P.state.mode : "ENJOY");
+})();
+</script>
+</body>
+</html>

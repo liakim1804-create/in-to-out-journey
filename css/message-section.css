@@ -1,0 +1,179 @@
+:root {
+  --ghost-line-opacity: .16;
+  --ghost-fill-opacity: .035;
+}
+
+.journey-message {
+  position: relative;
+  height: 230vh;
+  color: var(--text-main);
+  background: #000;
+}
+
+.journey-message::after {
+  content: "";
+  position: absolute;
+  z-index: 8;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 18vh;
+  pointer-events: none;
+  display: none; /* 아래로 어두워지는 그라디언트 제거 */
+}
+
+.journey-message__frame {
+  isolation: isolate;
+  background: #000;
+}
+
+.journey-message__media,
+.journey-message__image,
+.journey-message__image img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.journey-message__media { z-index: -2; overflow: hidden; }
+.journey-message__media::after {
+  content: "";
+  position: absolute;
+  z-index: 4;
+  inset: 0;
+  pointer-events: none;
+  background: rgba(0, 0, 0, .1); /* 제목 가독성용 고른 막 — 아래로 어두워지지 않게 */
+}
+
+.journey-message__image { overflow: hidden; }
+.journey-message__image img { object-fit: cover; }
+.journey-message__image--in { z-index: 1; }
+.journey-message__image--in img { object-position: 50% 50%; } /* 새 사진(16:9) 그대로 — 가운데 기준 */
+.journey-message__image--out {
+  z-index: 2;
+  clip-path: inset(0 0 0 100%); /* 시작: 오른쪽 밖. message-section.js가 절반까지 연다 */
+}
+.journey-message__image--out img { object-position: 50% 50%; }
+
+.journey-message__blend {
+  display: none;
+  position: absolute;
+  z-index: 3;
+  top: 0;
+  bottom: 0;
+  left: 45%;
+  width: 10%;
+  pointer-events: none;
+  opacity: .5;
+  background: linear-gradient(90deg, transparent, rgba(9, 12, 17, .16), transparent);
+  filter: blur(14px);
+}
+
+.journey-message__monitor {
+  position: absolute;
+  z-index: 3;
+  top: 50%;
+  left: 50%;
+  width: min(44vw, 720px);
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  transform: translate(-50%, -50%);
+  border-radius: 42px;
+  background: rgba(255, 255, 255, var(--ghost-fill-opacity));
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+
+.journey-message__monitor svg { width: 100%; height: 100%; }
+.journey-message__monitor-stroke {
+  fill: none;
+  stroke: rgba(255, 255, 255, var(--ghost-line-opacity));
+  stroke-width: 1;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+
+.journey-message__title {
+  position: absolute;
+  z-index: 5;
+  top: 50%;
+  left: 50%;
+  width: min(920px, 82vw);
+  transform: translate(-50%, -50%);
+  text-align: center;
+  opacity: 0;
+}
+
+.journey-message__title h2 { margin: 0; color: var(--text-main); }
+.journey-message__title h2 span { display: inline-block; margin-inline: .09em; opacity: .2; }
+.journey-message__title p { margin: 24px auto 0; color: var(--text-sub); }
+
+.journey-message__caption {
+  position: absolute;
+  z-index: 5;
+  bottom: 10vh;
+  width: min(330px, 34vw);
+  opacity: 0;
+  transform: translateY(14px);
+}
+.journey-message__caption--in { left: 5vw; }
+.journey-message__caption--out { right: 5vw; text-align: right; }
+.journey-message__caption-head { display: flex; align-items: center; gap: 10px; }
+.journey-message__caption--out .journey-message__caption-head { justify-content: flex-end; }
+.journey-message__caption-head i { flex: 1; height: 1px; background: rgba(227, 161, 108, .62); }
+.journey-message__number { color: var(--amber); }
+.journey-message__caption strong { color: var(--text-main); }
+.journey-message__caption p { margin: 9px 0 0; color: var(--text-sub); }
+
+.journey-message.is-active :is(.journey-message__image img, .journey-message__image--out, .journey-message__monitor-stroke) {
+  will-change: transform, clip-path, stroke-dashoffset;
+}
+
+@media (max-width: 734px) {
+  .journey-message { height: 220vh; }
+  .journey-message__image--in img { object-position: 50% 50%; }
+  .journey-message__image--out {
+    clip-path: inset(100% 0 0 0);
+  }
+  .journey-message__image--out img { object-position: 50% 50%; }
+  .journey-message__blend {
+    top: 45%;
+    right: 0;
+    bottom: auto;
+    left: 0;
+    width: 100%;
+    height: 10%;
+    background: linear-gradient(180deg, transparent, rgba(9, 12, 17, .16), transparent);
+  }
+  .journey-message__monitor { width: 85vw; border-radius: 28px; }
+  .journey-message__title { width: 88vw; }
+  .journey-message__title p { margin-top: 16px; }
+  .journey-message__caption { width: 58vw; bottom: auto; }
+  .journey-message__caption--in { top: 34%; left: 6vw; }
+  .journey-message__caption--out { right: 6vw; bottom: 7vh; }
+  .journey-message__caption-head i { max-width: 68px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .journey-message { height: auto; min-height: 100svh; }
+  .journey-message__frame { position: relative; min-height: 100svh; }
+  .journey-message__image--out { clip-path: inset(0 0 0 50%); }
+  .journey-message__monitor-stroke { stroke-dashoffset: 0; }
+  .journey-message__title,
+  .journey-message__caption { opacity: 1; transform: none; }
+  .journey-message__title h2 span { opacity: 1; }
+  .journey-message__image img { transform: none !important; }
+}
+
+@media (max-width: 734px) and (prefers-reduced-motion: reduce) {
+  .journey-message__image--out { clip-path: inset(50% 0 0 0); }
+}
+
+/* IN → OUT 스크롤 연출 — 기내 사진이 꽉 찬 채로 시작하고, 여행지 사진이 오른쪽(모바일은 아래)에서 밀려 들어와 절반을 채운다.
+   다 채운 뒤 더 스크롤하면 제목이 나타난다. 값은 message-section.js가 넣는다 */
+.journey-message { height: 380vh; } /* 사진 등장 → 머묾 → 제목까지 여유 있게 */
+.journey-message__frame { height: 100svh; }
+.journey-message__monitor { display: none; }
+.journey-message__title { opacity: 0; }
+.journey-message__title h2 span { opacity: .2; }

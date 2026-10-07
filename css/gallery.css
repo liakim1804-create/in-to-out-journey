@@ -1,0 +1,246 @@
+/* 디자인 컨셉 — Apple 갤러리처럼 옆으로 넘기는 카드. 첫 카드는 그리드에 맞추고, 다음 카드는 오른쪽에 살짝 보인다 */
+.concept { height: auto; padding: clamp(96px, 14vh, 160px) 0 clamp(96px, 14vh, 160px); background: #000; }
+.concept-head { max-width: 1180px; margin: 0 auto clamp(40px, 6vh, 64px); padding: 0 max(5vw, 22px); box-sizing: content-box; }
+.concept-head h2 { margin: 0; color: var(--text-main); }
+
+.gallery { --edge: max(5vw, 22px, calc((100% - 1180px) / 2)); } /* 100%: 스크롤바를 뺀 폭 — 제목과 같은 왼쪽 선 */
+.gallery__track { display: flex; gap: 20px; margin: 0; padding: 0 var(--edge); list-style: none; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scroll-padding-inline: var(--edge); scrollbar-width: none; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; } /* apple.com 갤러리 방식 — 기본 스크롤 + 스냅. 세로는 페이지로 그대로 */
+.gallery__track::-webkit-scrollbar { display: none; }
+/* Apple 갤러리 실측: 카드 696 / 643 / 260px, 간격 20px, 모서리 28px, 비율 1.54 (모바일 0.823) */
+.gallery-card { flex: 0 0 696px; scroll-snap-align: start; scroll-snap-stop: always; }
+@media (max-width: 1068px) { .gallery-card { flex-basis: 643px; } }
+.gallery-card figure { margin: 0; }
+.gallery-card__media { aspect-ratio: 1.54; overflow: hidden; border-radius: 28px; background: #000000; }
+.gallery-card__media img { width: 100%; height: 100%; object-fit: cover; user-select: none; transform: scale(1.06); transition: transform 1.2s cubic-bezier(.22, .61, .36, 1), opacity .6s ease; }
+.gallery-card.is-current .gallery-card__media img { transform: none; }
+.gallery-card:not(.is-current) .gallery-card__media img { opacity: .55; }
+.gallery-card__caption { max-width: 512px; margin-top: 24px; padding: 0 20px; color: var(--text-sub); word-break: keep-all; text-wrap: balance; }
+.gallery-card__caption strong { display: block; margin-bottom: 6px; color: var(--text-main); font-weight: inherit; }
+
+/* 아래 내비 — 가운데 점, 오른쪽 이전·다음 (테두리 없는 원) */
+.gallery__nav { position: relative; display: flex; align-items: center; justify-content: center; max-width: 1180px; margin: 36px auto 0; padding: 0 max(5vw, 22px); box-sizing: content-box; }
+.gallery__dots { display: flex; gap: 6px; padding: 14px 18px; border-radius: 999px; background: rgba(255, 255, 255, .1); }
+.gallery__dots button { width: 8px; height: 8px; padding: 0; border: 0; border-radius: 99px; background: rgba(255, 255, 255, .35); cursor: pointer; transition: width .4s cubic-bezier(.22, .61, .36, 1), background .3s; }
+.gallery__dots button.is-active { width: 32px; background: var(--text-main); }
+.gallery__paddles { position: absolute; right: max(5vw, 22px); display: flex; gap: 12px; }
+.gallery__paddles button { display: grid; place-items: center; width: 36px; height: 36px; padding: 0; border: 0; border-radius: 50%; color: var(--text-main); background: rgba(255, 255, 255, .14); cursor: pointer; transition: opacity .3s, background .3s; }
+.gallery__paddles button:hover:not(:disabled) { background: rgba(255, 255, 255, .24); }
+.gallery__paddles button:disabled { opacity: .3; cursor: default; }
+.gallery__paddles svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.gallery button:focus-visible { outline: 1px solid var(--amber); outline-offset: 3px; }
+
+@media (max-width: 734px) {
+  .gallery-card { flex-basis: 260px; }
+  .gallery-card__media { aspect-ratio: .823; }
+  .gallery-card__caption { margin-top: 18px; padding: 0 4px; }
+  .gallery__paddles { display: none; }
+}
+
+/* 시각 요소가 없는 밤 섹션 배경은 남색 그라데이션 대신 검정으로 통일 */
+.hero-frame, .overview, .enjoy, .mode-switch, .rest, .feature-showcase { background: #000; }
+.product-frame::before, .mode-frame::before { background: #000; }
+@media (max-width: 760px) { .hero-frame, .product-frame::before, .mode-frame::before { background: #000; } }
+.intro-hero { background: #000; }
+.feature-slides { background: rgba(255, 255, 255, .04); }
+
+/* 콘셉트 선언 — 스크롤 거리를 늘려 단어가 끊기지 않게, 모드 알약은 테두리 없이 면으로 */
+.overview { height: auto; }
+.overview .overview-frame { position: relative; height: auto; overflow: visible; padding: 26vh 0 7vh; }
+.word-reveal span { transition: none; color: var(--text-main); opacity: .18; will-change: opacity; }
+
+/* 모드 전환 — 스크롤 거리를 늘려 천천히, 활성 탭은 테두리 대신 미끄러지는 알약 */
+.mode-switch { height: 330vh; }
+.mode-tabs { position: relative; isolation: isolate; }
+.mode-tabs button, .mode-tabs button.is-active { position: relative; z-index: 1; background: transparent; box-shadow: none; transition: color .4s ease; }
+.mode-tabs button.is-active { color: var(--text-main); }
+
+/* 콘셉트 선언 아래 — IFE 시작 화면 캡처 */
+.overview-shot { margin: 0; padding: 0 0 30vh; display: grid; justify-items: center; }
+.overview-shot img { display: block; width: 71.4vw; height: auto; aspect-ratio: 16 / 9; border-radius: 2.2vw; object-fit: cover; box-shadow: 0 0 0 1px rgba(255, 255, 255, .06); }
+@media (max-width: 760px) { .overview-shot img { width: calc(100% - 32px); border-radius: 20px; } }
+@media (max-width: 760px) { .overview .overview-frame { padding: 20vh 24px 6vh; } }
+
+/* 모드 토글 — 객실 등급(Economy/Premium/Business) 토글과 같은 크기 */
+/* 크기는 apple.com/kr/iphone-18-pro 조리개 탭 실측: 틀 높이 44 · 안쪽 4 · 버튼 36 · 글자 14 · 좌우 16 */
+#mode .mode-tabs { width: max-content !important; max-width: 100%; height: auto !important; gap: 0 !important; padding: 4px !important; margin: clamp(36px, 5vh, 56px) 0 clamp(28px, 4vh, 40px) !important; background: #333336 !important; } /* 제목과 탭 사이를 넉넉히 */
+#mode .mode-tabs button { flex: 0 0 auto !important; min-width: 0 !important; height: 36px !important; padding: 0 16px !important; font-size: 14px !important; line-height: 20px !important; letter-spacing: normal !important; }
+@media (max-width: 760px) { #mode .mode-tabs { width: max-content !important; } }
+#mode .mode-tabs button, #mode .mode-tabs button.is-active { border: 0 !important; box-shadow: none !important; }
+
+/* 섹션 간 여백 — 콘셉트 선언(#overview) 하단 여백(30vh)을 기준 값으로 통일.
+   일반(핀 고정이 아닌) 섹션은 위·아래 절반(15vh)씩 가져 인접 섹션 사이 간격이 항상 30vh가 된다. */
+:root { --section-gap: 30vh; }
+.overview-shot { padding-bottom: var(--section-gap); }
+.concept, .feature-showcase, .proof, .compare, .benefits, .cabins, .booking { padding-block: calc(var(--section-gap) / 2); }
+@media (max-width: 760px) { :root { --section-gap: 24vh; } }
+#mode .mode-tabs button { transition: none !important; }
+
+/* ENJOY · REST — 떠다니던 화면/카드 연출을 없애고, 화면 하나를 텍스트 상단 라인에 맞춰 고정 배치 */
+.enjoy, .rest { height: 100vh; min-height: 100vh; }
+
+/* ENJOY · REST 공통 — 같은 크기의 화면 캡처, 텍스트 상단 라인에 정렬 */
+.section-shot { position: absolute; z-index: 2; top: 17%; right: max(5vw, 24px); width: min(52vw, 860px); margin: 0; }
+.section-shot img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; border-radius: 1.6vw; object-fit: cover; box-shadow: 0 0 0 1px rgba(255, 255, 255, .08), 0 40px 110px rgba(0, 0, 0, .45); }
+@media (max-width: 760px) { .section-shot { top: 36%; left: 24px; right: 24px; width: auto; } .section-shot img { border-radius: 14px; } }
+
+/* ENJOY · REST — 배경 사진 제거(검정 배경) */
+.enjoy .product-frame::before, .rest .rest-frame::before { background-image: none !important; background-color: #000 !important; }
+@media (max-width: 760px) { .enjoy .product-frame::before, .rest .rest-frame::before { background-image: none !important; background-color: #000 !important; } }
+
+/* 지금 필요한 시간으로 — 토글로 모드 이미지 + 텍스트 두 줄 전환 */
+/* 카드 크기·글 위계는 apple.com/kr/iphone-duo 하이라이트 갤러리 실측: 카드 1260×612(1440 화면에서 87.5%) · 모서리 28 ·
+   카드 위쪽 48px에 가운데 정렬 제목 28/35 600. 화면이 낮으면 제목·탭과 함께 들어가도록 높이를 줄인다 */
+.mode-viewer { position: relative; width: min(1260px, 87.5vw); height: min(612px, 100vh - 300px); }
+.mode-card { position: absolute; inset: 0; isolation: isolate; overflow: hidden; padding: 48px 32px; border-radius: 28px; background: #0b0c0e; text-align: center; opacity: 0; pointer-events: none; transition: opacity .5s ease; }
+.mode-card.is-active { opacity: 1; pointer-events: auto; }
+.mode-card img { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; opacity: .8; }
+.mode-card::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(9, 10, 12, .78) 0%, rgba(9, 10, 12, .3) 34%, rgba(9, 10, 12, 0) 60%); }
+.mode-card__headline { max-width: 600px; margin: 0 auto; font: 600 28px/1.25 var(--font-text, "Pretendard", system-ui, sans-serif); letter-spacing: .007em; color: #fff; word-break: keep-all; }
+@media (max-width: 760px) { .mode-viewer { width: 100%; height: auto; aspect-ratio: 4 / 5; } .mode-card { padding: 32px 20px; } .mode-card__headline { font-size: 21px; } }
+
+/* 혜택 벤토 — 프로토타입(screens-v2/proto.css) 스타일 그대로: 차콜 표면, 헤어라인, 앰버 선택선, 앰버 스위치 */
+.benefit-bento {
+  --c-950: #090A0C; --c-900: #121314; --c-850: #1A1C1E; --c-800: #242528; --c-50: #F4F5F6;
+  --a-200: #F8D6B2; --a-400: #E1A974; --a-500: #CE935E;
+  --text-1: #F4F5F6; --text-2: #B3B4B7; --text-3: #919295;
+  --glass: rgba(244, 245, 246, .06); --glass-strong: rgba(244, 245, 246, .1); --hairline: rgba(244, 245, 246, .09);
+  --sel: inset 0 0 0 1px rgba(237, 191, 145, .6);
+  --pf: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --ease-p: cubic-bezier(.25, .1, .25, 1);
+}
+.benefits .benefit-bento .bento-tile:not(.bento-tile--photo) { background: var(--c-850); color: var(--text-1); --text-main: var(--text-1); --text-sub: var(--text-3); border-color: transparent; box-shadow: inset 0 0 0 1px var(--hairline); border-radius: 28px; }
+.benefits .benefit-bento .bento-tile--navy { background: var(--c-900); }
+.benefit-bento .bento-tile h3 { font: 600 24px/1.3 var(--pf); letter-spacing: -.022em; color: var(--text-1); }
+.benefit-bento .bento-tile p { font: 400 17px/1.55 var(--pf); letter-spacing: -.012em; color: var(--text-2); }
+
+/* 도착 체크리스트 — 프로토타입 vstep */
+.benefits .bento-check { gap: 0; }
+.benefits .bento-check li { grid-template-columns: 40px 1fr auto; gap: 18px; padding: 16px 0; border-radius: 0; background: transparent; box-shadow: none; cursor: pointer; }
+.benefits .bento-check li + li { border-top: 1px solid var(--hairline); }
+.benefits .bento-check i { width: 40px; height: 40px; border: 0; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(244, 245, 246, .22); transition: background .2s var(--ease-p); }
+.benefits .bento-check .is-done i { background: var(--c-50); box-shadow: none; }
+.benefits .bento-check i::after { content: ""; position: absolute; top: 9px; left: 15px; width: 8px; height: 15px; border: solid var(--c-950); border-width: 0 2px 2px 0; transform: rotate(45deg); opacity: 0; }
+.benefits .bento-check .is-done i::after { top: 9px; left: 15px; opacity: 1; }
+.benefits .bento-check span { font: 600 20px/1.3 var(--pf); letter-spacing: -.02em; color: var(--text-1); }
+.benefits .bento-check small { margin-top: 4px; font: 500 15px/1.45 var(--pf); letter-spacing: -.008em; color: var(--text-3); }
+.benefits .bento-check .is-done span { color: var(--text-3); text-decoration: line-through; text-decoration-color: rgba(244, 245, 246, .35); }
+.benefits .bento-check em, .benefits .bento-check em.is-opt { padding: 6px 10px; border: 0; border-radius: 999px; font: 600 12px/1.2 var(--pf); letter-spacing: .06em; color: var(--a-200); background: rgba(225, 169, 116, .12); }
+.benefits .bento-check em.is-opt { color: var(--text-3); background: var(--glass); }
+.bento-check li:focus-visible, .bento-seg button:focus-visible, .bento-wake button:focus-visible, .bento-meal button:focus-visible, .bento-qr .bento-pill:focus-visible { outline: 1px solid rgba(237, 191, 145, .55); outline-offset: 2px; }
+
+/* 조명 · 소리 — 프로토타입 seg */
+.bento-env { display: grid; gap: 12px; margin-top: auto; padding-top: 28px; position: relative; z-index: 2; }
+.bento-seg { display: flex; flex-wrap: wrap; gap: 8px; padding: 0; background: none; border-radius: 0; }
+.benefit-bento .bento-seg button { height: 40px; margin: 0; padding: 0 16px; border: 0; border-radius: 999px; background: var(--glass); box-shadow: inset 0 0 0 1px var(--hairline); font: 500 15px/1 var(--pf); letter-spacing: -.008em; color: var(--text-2); cursor: pointer; transition: background .2s var(--ease-p), color .2s var(--ease-p); }
+.benefit-bento .bento-seg button[aria-checked="true"] { background: transparent; box-shadow: var(--sel); color: var(--text-1); font-weight: 600; }
+
+/* 깨울 순간만 남기기 — 프로토타입 switch-row */
+.bento-wake { position: relative; z-index: 2; display: grid; gap: 0; margin-top: 24px; }
+.benefit-bento .bento-wake button { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 0; padding: 14px 0; border: 0; border-radius: 0; background: transparent; backdrop-filter: none; color: var(--text-1); text-align: left; font: 500 16px/1.4 var(--pf); letter-spacing: -.01em; cursor: pointer; }
+.benefit-bento .bento-wake button + button { border-top: 1px solid var(--hairline); }
+.bento-wake small { margin-left: 8px; font: 500 15px/1.4 var(--pf); color: var(--text-3); }
+.bento-wake i { position: relative; flex: none; width: 52px; height: 32px; border-radius: 999px; background: rgba(244, 245, 246, .16); transition: background .25s var(--ease-p); }
+.bento-wake i::after { content: ""; position: absolute; top: 3px; left: 3px; width: 26px; height: 26px; border-radius: 50%; background: var(--c-50); transition: transform .25s var(--ease-p); }
+.bento-wake button[aria-checked="true"] i { background: var(--a-500); }
+.bento-wake button[aria-checked="true"] i::after { transform: translateX(20px); }
+
+/* 휴대폰으로 이어받기 — 프로토타입 pill / QR */
+.bento-qr { display: flex; flex-wrap: wrap; align-items: center; gap: 24px; margin-top: 28px; }
+.benefit-bento .bento-qr .bento-pill { height: 48px; margin: 0; padding: 0 22px; border: 0; background: var(--glass); box-shadow: inset 0 0 0 1px var(--hairline); backdrop-filter: blur(24px); font: 500 15px/1.45 var(--pf); letter-spacing: -.008em; color: var(--text-1); cursor: pointer; transition: background .2s var(--ease-p); }
+.benefit-bento .bento-qr .bento-pill:hover { background: var(--glass-strong); }
+.bento-qr .bento-pill i { background: none; width: 18px; height: 18px; border: 1.8px solid var(--text-2); border-radius: 4px; }
+.bento-qr__box { display: flex; align-items: center; gap: 22px; }
+.bento-qr__box[hidden] { display: none; }
+.bento-qr__code { --n: 11; display: grid; grid-template-columns: repeat(var(--n), 1fr); width: 132px; height: 132px; padding: 12px; border-radius: 20px; background: var(--c-50); }
+.bento-qr__code i { background: transparent; }
+.bento-qr__code i.on { background: var(--c-950); }
+.benefit-bento .bento-qr__box p { margin: 0; font: 600 17px/1.4 var(--pf); letter-spacing: -.014em; color: var(--text-1); }
+.bento-qr__box small { display: block; margin-top: 6px; font: 500 15px/1.45 var(--pf); color: var(--text-2); }
+
+/* 기내식 — 프로토타입 btn */
+.bento-meal { position: relative; z-index: 2; display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+.benefit-bento .bento-meal button { height: 44px; margin: 0; padding: 0 20px; border: 0; border-radius: 999px; background: var(--glass-strong); backdrop-filter: none; color: var(--text-1); font: 600 15px/1 var(--pf); letter-spacing: -.01em; cursor: pointer; transition: background .2s var(--ease-p), transform .2s var(--ease-p); }
+.benefit-bento .bento-meal button:hover { background: rgba(244, 245, 246, .16); }
+.benefit-bento .bento-meal button:active { transform: scale(.97); }
+.benefit-bento .bento-meal button[aria-pressed="true"] { background: var(--c-50); color: var(--c-950); }
+
+/* light-theme 규칙(typography-light.css)보다 구체적으로 — 벤토는 항상 차콜 표면 */
+.benefits[data-theme="light"] .benefit-bento .bento-tile:not(.bento-tile--photo):not(.bento-tile--navy) { background: var(--c-850); color: var(--text-1); }
+.benefits[data-theme="light"] .benefit-bento .bento-tile:not(.bento-tile--photo):not(.bento-tile--navy) p { color: var(--text-2); }
+.benefits[data-theme="light"] .benefit-bento .bento-tile h3 { color: var(--text-1); }
+.benefits[data-theme="light"] .benefit-bento .bento-check em { color: var(--a-200); background: rgba(225, 169, 116, .12); }
+.benefits[data-theme="light"] .benefit-bento .bento-check em.is-opt { color: var(--text-3); background: var(--glass); }
+.benefits .benefit-bento .bento-check .is-done i::after { border-color: var(--c-950); }
+.benefit-bento button::after { content: none; }
+
+/* 모드 개요 — 슬라이드마다 실제 모드 화면을 깔고, 왼쪽 아래에 제목과 설명만 */
+.feature-slides { aspect-ratio: 16 / 9; min-height: 0; background: #000; }
+.feature-slide { display: flex; flex-direction: column; justify-content: flex-end; isolation: isolate; padding-bottom: clamp(22px, 2.6vw, 36px); } /* 글은 카드 바닥 가까이 */
+.feature-slide__shot { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; filter: brightness(.85); }
+.feature-slide::before { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: linear-gradient(to top, rgba(0, 0, 0, .96) 0%, rgba(0, 0, 0, .88) 18%, rgba(0, 0, 0, .45) 32%, rgba(0, 0, 0, 0) 50%); }
+.feature-slide h3 { margin-top: 0; }
+@media (max-width: 760px) {
+  .feature-slides { aspect-ratio: auto; }
+  .feature-slide__shot { object-position: left top; }
+}
+
+/* 엔딩 — 화면 가득한 사진 한 장. 위: 마지막 문구와 버튼 / 아래: 화면 폭만 한 MOMEN과 푸터 */
+.booking.ending { position: relative; min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column; justify-content: space-between;
+  padding: clamp(96px, 16vh, 160px) max(5vw, 24px) 28px; overflow: hidden; isolation: isolate; color: #fff; background: #000; }
+.ending__bg { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; }
+.ending::before { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: linear-gradient(180deg, rgba(0, 0, 0, .7) 0%, rgba(0, 0, 0, .15) 38%, rgba(0, 0, 0, .25) 60%, rgba(0, 0, 0, .85) 100%); }
+.ending__copy { max-width: 1180px; width: 100%; margin: 0 auto; }
+.ending__copy h2 { color: #fff; }
+.ending__copy > p:first-of-type { color: rgba(255, 255, 255, .72); }
+.ending .booking-actions { margin-top: 32px; }
+.ending .button--primary { color: #000; background: #fff; border-color: #fff; }
+.ending .text-button { color: rgba(255, 255, 255, .8); }
+.ending .booking-message { color: rgba(255, 255, 255, .8); }
+.ending__mark { margin: 0 auto; width: 100%; max-width: 1180px; color: #fff; font: 600 clamp(80px, 18.5vw, 300px)/.82 -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", sans-serif;
+  letter-spacing: -.045em; text-align: center; white-space: nowrap; }
+.ending__foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; max-width: 1180px; width: 100%; margin: 24px auto 0; padding-top: 18px;
+  border-top: 1px solid rgba(255, 255, 255, .2); color: rgba(255, 255, 255, .62); font-size: 13px; letter-spacing: .02em; background: none; }
+.ending__foot small { font-size: inherit; }
+
+/* 여정 타임라인 — 기내 기능 갤러리와 같은 점 표시, 카드 왼쪽 선에 맞춰 왼쪽 정렬 */
+.feature-nav { justify-content: flex-start; max-width: 1180px; padding: 0; margin-top: 28px; }
+.feature-dots button i { display: none; }
+.feature-slide::before { display: none; } /* 배경 이미지를 뺐으니 글 아래 어둡게 까는 막도 뺀다 */
+/* 타임라인 카드 — 테두리 없이 #1D1D1F 면으로 */
+.feature-slides { background: #1d1d1f !important; border: 0 !important; box-shadow: none !important; }
+
+/* 줄바꿈 — 여러 줄이 되면 줄 길이가 고르게(위아래 길이가 맞게) 나뉘도록. 단어 중간에서는 끊지 않는다 */
+h1, h2, h3, h4, p, figcaption, blockquote, summary, dd { text-wrap: balance; word-break: keep-all; }
+
+/* 타임라인 카드 목업 — 좌석 모니터(투명 PNG)를 카드 오른쪽에, 글은 왼쪽 아래 그대로 */
+.feature-slide__mock { position: absolute; z-index: -1; right: 4%; top: 50%; height: 92%; width: auto; max-width: 62%; object-fit: contain; transform: translateY(-50%); pointer-events: none; filter: drop-shadow(0 40px 60px rgba(0, 0, 0, .45)); }
+@media (max-width: 760px) { .feature-slide__mock { right: 50%; top: 6%; height: auto; width: 86%; max-width: none; transform: translateX(50%); } }
+/* 타임라인 카드 — 글은 좌상단, 목업은 크게 키워 오른쪽 아래로 흘러 하단이 잘리게 (apple.com 하이라이트 카드 방식, 가운데 정렬 아님) */
+.feature-slide { justify-content: flex-start; padding: clamp(32px, 4vw, 56px) clamp(32px, 4.5vw, 64px); }
+.feature-slide h3 { margin-top: 0; }
+.feature-slide__mock { top: auto; bottom: -22%; right: 3%; width: 68%; height: auto; max-width: none; transform: none; }
+@media (max-width: 760px) { .feature-slide__mock { top: auto; bottom: -14%; right: -8%; width: 110%; transform: none; } }
+.feature-slide__mock { bottom: -10%; } /* 위로 올려 모니터 아래 일부만 잘리게 */
+/* 점 표시 — 알약 배경 없이 점만, 왼쪽 끝을 카드 왼쪽 선에 맞춘다 (두 갤러리 공통) */
+.gallery__dots { background: none !important; padding: 0 !important; border-radius: 0 !important; }
+.gallery__nav:not(.feature-nav) { justify-content: flex-start; }
+/* 모드 탭 선택 — 검정 대신 점 표시 알약에 쓰던 반투명 흰색(rgba 255,255,255,.1), 테두리 없이 */
+#mode .mode-tabs button.is-active { background: rgba(255, 255, 255, .1) !important; border-color: transparent !important; color: #fff !important; }
+
+/* 시작 화면 선택 빛 순환 — 같은 화면 다섯 장을 겹쳐 두고 차례로 겹쳐 바꾼다(카드 위치만 다르므로 빛만 옆으로 흐르는 것처럼 보인다) */
+.overview-shot__stack { position: relative; width: 71.4vw; aspect-ratio: 16 / 9; border-radius: 2.2vw; overflow: hidden; box-shadow: 0 0 0 1px rgba(255, 255, 255, .06); }
+.overview-shot__stack img { position: absolute; inset: 0; width: 100% !important; height: 100% !important; border-radius: 0 !important; box-shadow: none !important; opacity: 0; transition: opacity .6s cubic-bezier(.4, 0, .2, 1); }
+.overview-shot__stack img.is-on { opacity: 1; }
+@media (max-width: 760px) { .overview-shot__stack { width: calc(100% - 32px); border-radius: 20px; } }
+/* 모드 탭 — 틀은 점 표시 알약에 쓰던 어두운 반투명 흰색, 선택은 흰 알약 + 검정 글자 */
+#mode .mode-tabs { background: rgba(255, 255, 255, .1) !important; }
+#mode .mode-tabs button.is-active { background: #fff !important; color: #000 !important; border-color: transparent !important; }
+/* 순환 — 이전 장은 밑에서 그대로 보이고 새 장만 위로 덮이게 (두 장이 같이 반투명해져 화면이 어두워지지 않도록) */
+.overview-shot__stack img { transition: none; }
+.overview-shot__stack img.is-prev { opacity: 1; z-index: 1; }
+.overview-shot__stack img.is-on { opacity: 1; z-index: 2; transition: opacity .45s cubic-bezier(.4, 0, .2, 1); }
+/* 모드 카드 — 문구를 카드 아래쪽으로, 어둡게 까는 막도 아래로 */
+.mode-card { display: flex; flex-direction: column; justify-content: flex-end; }
+.mode-card::after { background: linear-gradient(0deg, rgba(9, 10, 12, .78) 0%, rgba(9, 10, 12, .3) 34%, rgba(9, 10, 12, 0) 60%) !important; }

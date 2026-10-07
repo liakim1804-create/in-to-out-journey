@@ -1,0 +1,164 @@
+/* 타이포그래피 시스템 — apple.com/kr/iphone-18-pro 실측값 (docs/typography-measured.md)
+   · 구분 지점은 애플과 같다: 기본(1069px 이상) / 1068px 이하 / 734px 이하. clamp()를 쓰지 않는다
+   · 행간은 실측 비율(computed px ÷ font-size), 자간은 실측 em
+   · 폰트 파일은 넣지 않는다 — 맥·iOS는 기기에 깔린 SF Pro(-apple-system)가, 나머지는 Pretendard가 쓰인다
+   · 큰 글자(19px 이상)는 Display 스택, 작은 글자(17px 이하)는 Text 스택 — 애플과 같은 분리
+   · 크기·굵기·행간·자간만 다룬다. 색은 다른 파일의 규칙을 따른다 */
+:root {
+  --font-display: "SF Pro KR", "SF Pro Display", -apple-system, BlinkMacSystemFont, "SF Pro Icons", "Apple SD Gothic Neo", "Pretendard Variable", Pretendard, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-text: "SF Pro KR", "SF Pro Text", -apple-system, BlinkMacSystemFont, "SF Pro Icons", "Apple SD Gothic Neo", "Pretendard Variable", Pretendard, "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  /* 역할: 크기 / 굵기 / 행간 / 자간 — 애플 클래스명은 괄호 */
+  --type-hero: 600 80px/1.15 var(--font-display);            /* (media-hero-headline-elevated) */
+  --type-hero-ls: normal;
+  --type-xxl: 600 96px/1.1462 var(--font-display);           /* (ric-type-lockup-xxl-headline) */
+  --type-xxl-ls: normal;
+  --type-xl: 600 64px/1.1719 var(--font-display);            /* (ric-type-lockup-xl-headline) */
+  --type-xl-ls: normal;
+  --type-section: 600 48px/1.1875 var(--font-display);       /* (section-header-headline) */
+  --type-section-ls: normal;
+  --type-eyebrow-super: 600 32px/1.2188 var(--font-display); /* (eyebrow-super) */
+  --type-eyebrow-super-ls: .004em;
+  --type-eyebrow: 600 21px/1 var(--font-display);            /* (ric-type-lockup-xxl-eyebrow) */
+  --type-eyebrow-ls: .011em;
+  --type-card: 600 28px/1.25 var(--font-display);            /* (feature-card-headline) */
+  --type-card-ls: .007em;
+  --type-copy: 600 21px/1.5238 var(--font-display);          /* (ric-type-lockup-xxl-copy) */
+  --type-copy-ls: .011em;
+  --type-gallery: 600 17px/1.353 var(--font-text);           /* (갤러리 캡션 실측 17px/600) */
+  --type-gallery-ls: normal;
+  --type-number: 600 40px/1.1 var(--font-display);           /* (ps-stat-value) */
+  --type-number-ls: normal;
+  --type-nav-title: 600 19px/1.3334 var(--font-display);     /* (localnav-product-name) */
+  --type-nav-title-ls: .012em;
+  --type-label: 600 17px/1.353 var(--font-text);             /* (feature-card-label, dropdown-label) */
+  --type-card-body: 400 17px/1.353 var(--font-text);         /* (feature-card-body, dropdown-select) */
+  --type-body: 400 17px/1.5882 var(--font-text);             /* (all-access-pass-pv-item-body) */
+  --type-accordion: 400 17px/1.5882 var(--font-text);        /* (아코디언 제목 — 모든 폭에서 17px) */
+  --type-link: 400 17px/1.1765 var(--font-text);             /* (hero CTA a.button) */
+  --type-tab: 400 17px/1.1765 var(--font-text);              /* (탭 [role=tab]) */
+  --type-small: 400 14px/1.4286 var(--font-text);            /* (body-reduced-tight) */
+  --type-caption: 400 12px/1.4167 var(--font-text);          /* (caption) */
+  --type-footer: 400 12px/1.3334 var(--font-text);           /* (footer) */
+}
+@media (max-width: 1068px) {
+  :root {
+    --type-hero: 600 64px/1.1719 var(--font-display);
+    --type-xxl: 600 64px/1.1719 var(--font-display);
+    --type-xl: 600 48px/1.1875 var(--font-display);
+    --type-section: 600 40px/1.2 var(--font-display);
+    --type-eyebrow-super: 600 28px/1.25 var(--font-display);
+    --type-eyebrow-super-ls: .007em;
+    --type-card: 600 24px/1.2917 var(--font-display);
+    --type-card-ls: .009em;
+    --type-card-body: 400 14px/1.4286 var(--font-text);
+    --type-link: 400 14px/1.2858 var(--font-text);
+  }
+}
+@media (max-width: 734px) {
+  :root {
+    --type-hero: 600 40px/1.2 var(--font-display);
+    --type-xxl: 600 40px/1.2 var(--font-display);
+    --type-xl: 600 40px/1.2 var(--font-display);
+    --type-section: 600 32px/1.2188 var(--font-display);
+    --type-eyebrow-super: 600 24px/1.2917 var(--font-display);
+    --type-eyebrow-super-ls: .009em;
+    --type-card: 600 21px/1.2858 var(--font-display);
+    --type-card-ls: .011em;
+    --type-copy: 600 19px/1.5263 var(--font-display);
+    --type-copy-ls: .012em;
+    --type-number: 600 28px/1.1 var(--font-display);
+    --type-number-ls: .007em;
+    --type-gallery: 600 14px/1.4286 var(--font-text);
+    --type-label: 600 14px/1.4286 var(--font-text);
+    --type-body: 400 14px/1.5714 var(--font-text);
+  }
+}
+
+/* 애플 한국어 페이지 공통: keep-all, 줄 균형 없음(wrap), antialiased, 글꼴 기능 기본값 */
+html, body { font-family: var(--font-text); -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+body, body * { word-break: keep-all; font-feature-settings: normal; font-variation-settings: normal; font-optical-sizing: auto; font-stretch: normal; }
+
+/* ── 토큰 클래스 — 사이트의 모든 텍스트는 아래 역할 중 하나로만 정해진다 ─────────── */
+.t-hero, .intro-hero__title, .intro__copy {
+  font: var(--type-hero); letter-spacing: var(--type-hero-ls); text-wrap: wrap;
+}
+.t-xxl, #overview-title, .landing-copy strong, #travel-title, .concept-layer > strong {
+  font: var(--type-xxl); letter-spacing: var(--type-xxl-ls); text-wrap: wrap;
+}
+.t-xl, #hero-title, #proof-title, #booking-title {
+  font: var(--type-xl); letter-spacing: var(--type-xl-ls); text-wrap: wrap;
+}
+.t-section, #concept-title, #enjoy-title, #mode-title, #rest-title, #features-title, #prepare-title, #compare-title, #benefits-title, #cabins-title {
+  font: var(--type-section); letter-spacing: var(--type-section-ls); text-wrap: wrap;
+}
+.t-eyebrow-super, .intro-hero__slogan {
+  font: var(--type-eyebrow-super); letter-spacing: var(--type-eyebrow-super-ls);
+}
+.t-eyebrow, .landing-slogan, .intro__invite {
+  font: var(--type-eyebrow); letter-spacing: var(--type-eyebrow-ls);
+}
+.t-card, .feature-slide h3, #cabin-headline, .benefit-bento h3, .bento-expand__copy h3, .quotes blockquote, #film-title, #benefit-dialog-title {
+  font: var(--type-card); letter-spacing: var(--type-card-ls); text-wrap: wrap;
+}
+.t-copy, .intro-hero__lede, .hero-lede, .quiet-copy, .section-copy > p, .travel-copy > p, .booking-copy > p,
+.concept-layer > p, .concept-caption, .film-dialog > p, #benefit-dialog-copy {
+  font: var(--type-copy); letter-spacing: var(--type-copy-ls); text-wrap: wrap;
+}
+.t-gallery, .gallery-card__caption {
+  font: var(--type-gallery); letter-spacing: var(--type-gallery-ls);
+}
+.t-number, .bento-poster b {
+  font: var(--type-number); letter-spacing: var(--type-number-ls);
+}
+.t-nav-title, .local-nav .brand > [data-brand], .intro-nav__logo {
+  font: var(--type-nav-title); letter-spacing: var(--type-nav-title-ls);
+}
+.t-label, .media-card h3, .marketing-heading label {
+  font: var(--type-label); letter-spacing: normal;
+}
+.t-card-body, .feature-slide > p, .benefit-bento p, .bento-expand__copy p, .comparison-table th, .comparison-table td, .comparison-table thead th, .cabin-spec dd, .marketing-heading select, .flight-search input {
+  font: var(--type-card-body); letter-spacing: normal;
+}
+.t-accordion, .prepare-rules summary {
+  font: var(--type-accordion); letter-spacing: normal;
+}
+.t-body, .prepare-rules p, .prepare-rules details p, #sleep-description {
+  font: var(--type-body); letter-spacing: normal;
+}
+.t-link, .button, .nav-cta.button, .text-button, .flight-search button, .intro-menu a {
+  font: var(--type-link); letter-spacing: normal;
+}
+.t-tab, .mode-tabs button, .cabin-tabs button, .feature-tabs span {
+  font: var(--type-tab); letter-spacing: normal;
+}
+.t-small, .media-card p, .bento-poster figcaption, .bento-check li, .bento-pill, .cabin-spec dt {
+  font: var(--type-small); letter-spacing: normal;
+}
+.t-caption, .section-links a, .nav-cta, .local-nav .brand .brand-sub, .continuity-meter li, .quotes figcaption, .media-card > span,
+.bento-poster small, .bento-check small, .bento-check em, .bento-seats__legend, .bento-seats__map i.is-mine b,
+.flight-search label span, .intro-nav__lang, .intro-skip {
+  font: var(--type-caption); letter-spacing: normal;
+}
+.t-footer, footer p, footer small, footer .brand, footer .brand-sub {
+  font: var(--type-footer); letter-spacing: normal;
+}
+/* 버튼 문구는 애플 CTA처럼 400 */
+.nav-cta, .button--primary { font-weight: 400; }
+
+/* ── 레이아웃 보조 (글자 크기와 무관) ─────────────────────────────── */
+.travel-copy { max-width: min(940px, 64vw); }
+@media (max-width: 734px) { .travel-copy { max-width: none; } }
+.intro-hero__lede, .hero-lede, .quiet-copy, .section-copy > p, .travel-copy > p { max-width: 640px; }
+.feature-slide p { max-width: 520px; }
+.button { min-height: 44px; padding: 0 22px; }
+.feature-heading { max-width: 1180px; }                 /* 제목을 아래 카드와 같은 왼쪽 그리드에 */
+.intro-hero__slogan, .landing-slogan { margin: 0 0 18px; color: var(--amber); }
+#cabin-kicker { display: none; }                         /* 스크립트가 쓰는 보조 라벨은 숨긴다 */
+.br-m { display: none; }                                 /* 모바일에서만 쓰는 줄바꿈 */
+@media (max-width: 734px) { .br-m { display: inline; } }
+
+/* 태블릿(761–1068px) — 21px 서브카피가 좌석 화면 목업과 겹치지 않게 목업을 아래로 */
+@media (min-width: 761px) and (max-width: 1068px) {
+  .seat-screen--hero { top: auto; right: 6%; bottom: 7%; width: min(54vw, 520px); }
+}

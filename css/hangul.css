@@ -1,0 +1,28 @@
+/* 한글 보정 — 맥의 Apple SD Gothic Neo는 같은 크기·굵기에서 Apple 웹폰트(SF Pro KR)보다
+   폭이 10% 넓고 획이 얇다 (캔버스 실측: 48px 600 폭 602 vs 548px, 잉크 밀도 .351 vs .410).
+   한글 글자에만(unicode-range) 크기를 90%로 줄이고, 획 밀도가 가장 가까운 굵기로 바꿔 끼운다.
+     SF Pro KR 400 ≈ SD Gothic 600 · 500 ≈ 700 · 600 ≈ 800 (40px 밀도 .336/.401/.435 vs .351/.389/.427)
+   라틴 글자는 SF Pro Display/Text 그대로. 폰트 파일은 넣지 않고 기기에 깔린 글꼴만 가리킨다. 라이트 구간 전용 */
+@font-face { font-family: "MOMEN Hangul"; font-weight: 100 449; size-adjust: 90%; src: local("AppleSDGothicNeo-SemiBold"), local("Apple SD Gothic Neo SemiBold"); unicode-range: U+1100-11FF, U+3130-318F, U+A960-A97F, U+AC00-D7AF, U+D7B0-D7FF; }
+@font-face { font-family: "MOMEN Hangul"; font-weight: 450 549; size-adjust: 90%; src: local("AppleSDGothicNeo-Bold"), local("Apple SD Gothic Neo Bold"); unicode-range: U+1100-11FF, U+3130-318F, U+A960-A97F, U+AC00-D7AF, U+D7B0-D7FF; }
+@font-face { font-family: "MOMEN Hangul"; font-weight: 550 900; size-adjust: 90%; src: local("AppleSDGothicNeo-ExtraBold"), local("Apple SD Gothic Neo ExtraBold"); unicode-range: U+1100-11FF, U+3130-318F, U+A960-A97F, U+AC00-D7AF, U+D7B0-D7FF; }
+/* 라이트(흰 배경) 구간에만 적용 — 다크 구간은 기존 시스템 한글 그대로 */
+[data-theme="light"] {
+  --font-display: "SF Pro KR", "SF Pro Display", "MOMEN Hangul", -apple-system, BlinkMacSystemFont, "SF Pro Icons", "Apple SD Gothic Neo", "Pretendard Variable", Pretendard, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-text: "SF Pro KR", "SF Pro Text", "MOMEN Hangul", -apple-system, BlinkMacSystemFont, "SF Pro Icons", "Apple SD Gothic Neo", "Pretendard Variable", Pretendard, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  /* typography-light.css에 없는 토큰도 이 안에서 다시 선언해야 위 글꼴을 쓴다 (값은 typography.css와 같음) */
+  --type-body: 400 17px/1.5882 var(--font-text);
+  --type-accordion: 400 17px/1.5882 var(--font-text);
+  --type-tab: 400 17px/1.1765 var(--font-text);
+  --type-number: 600 40px/1.1 var(--font-display);
+}
+@media (max-width: 734px) {
+  [data-theme="light"] {
+    --type-body: 400 14px/1.5714 var(--font-text);
+    --type-number: 600 28px/1.1 var(--font-display);
+  }
+}
+
+/* 디자인 쇼잉 — 내비게이션 없이 */
+.local-nav, .intro-nav, .intro-menu { display: none !important; }
+:root { --nav-height: 0px; }

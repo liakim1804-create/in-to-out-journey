@@ -1,0 +1,89 @@
+/* 라이트(지상 · OUT) 구간 타이포 — apple.com/kr/iphone-duo 밝은 배경 구간 실측값 (docs/typography-duo-measured.md)
+   다크 구간(typography.css, iPhone 18 Pro 기준)은 건드리지 않고, [data-theme="light"] 안에서 같은 토큰 이름에 라이트 값을 덮어쓴다.
+   구분 지점은 같다: 기본(1069px 이상) / 1068px 이하 / 734px 이하 */
+[data-theme="light"] {
+  /* 색 — 차가운 거의 블랙 / 차가운 회색 / 얇은 선. 순수 #000·갈색·앰버 텍스트 금지 */
+  --text-main: #000000;
+  --text-sub: #6f6f6f;
+  --line: rgba(0, 0, 0, .12);
+  --light-bg: #ffffff;           /* Duo 밝은 구간 샘플: #ffffff · #ffffff */
+  --light-card: #ffffff;
+
+  /* 역할: 크기 / 굵기 / 행간 / 자간 — Duo 클래스명은 괄호 */
+  --type-hero: 600 80px/1.15 var(--font-display);            /* (media-hero-headline-base) */
+  --type-hero-ls: -.005em;
+  --type-super: 600 48px/1.1875 var(--font-display);         /* (ric-type-lockup-super-headline) */
+  --type-section: 600 48px/1.1875 var(--font-display);       /* (section-header-headline) */
+  --type-card: 600 28px/1.25 var(--font-display);            /* (feature-card-headline) */
+  --type-card-ls: .007em;
+  --type-copy: 400 21px/1.5238 var(--font-display);          /* (ric-type-lockup-xxl-copy) — 18 Pro는 600, Duo 밝은 구간은 400 회색 */
+  --type-copy-ls: .011em;
+  --type-label: 600 17px/1.353 var(--font-text);             /* (feature-card-label) */
+  --type-card-body: 400 17px/1.353 var(--font-text);         /* (feature-card-body) */
+  --type-link: 400 17px/1.1765 var(--font-text);             /* (product-tile-ctas) */
+  --type-small: 400 14px/1.4286 var(--font-text);            /* (body-reduced-tight) */
+  --type-caption: 400 12px/1.4167 var(--font-text);          /* (caption) */
+  --type-footer: 400 12px/1.3334 var(--font-text);           /* (footer) */
+  color: var(--text-main);
+}
+@media (max-width: 1068px) {
+  [data-theme="light"] {
+    --type-hero: 600 64px/1.1719 var(--font-display);
+    --type-super: 600 40px/1.2 var(--font-display);
+    --type-section: 600 40px/1.2 var(--font-display);
+    --type-card: 600 24px/1.2917 var(--font-display);
+    --type-card-ls: .009em;
+    --type-card-body: 400 14px/1.4286 var(--font-text);
+  }
+}
+@media (max-width: 734px) {
+  [data-theme="light"] {
+    --type-hero: 600 48px/1.1875 var(--font-display);          /* Duo는 작은 화면 히어로가 48px (18 Pro는 40px) */
+    --type-super: 600 32px/1.2188 var(--font-display);
+    --type-section: 600 32px/1.2188 var(--font-display);
+    --type-card: 600 21px/1.2858 var(--font-display);
+    --type-card-ls: .011em;
+    --type-copy: 400 19px/1.5263 var(--font-display);
+    --type-copy-ls: .012em;
+    --type-label: 600 14px/1.4286 var(--font-text);
+    --type-link: 400 14px/1.4286 var(--font-text);
+  }
+}
+
+/* ── 역할 배정 — 라이트 구간의 큰 글자는 예약 히어로 하나, 나머지는 48px 위계 ───────── */
+[data-theme="light"] #booking-title { font: var(--type-hero); letter-spacing: var(--type-hero-ls); }
+[data-theme="light"] #proof-title { font: var(--type-super); letter-spacing: normal; }
+[data-theme="light"] :is(#compare-title, #benefits-title, #cabins-title) { font: var(--type-section); letter-spacing: normal; }
+[data-theme="light"] :is(.booking-copy > p) { font: var(--type-copy); letter-spacing: var(--type-copy-ls); color: var(--text-sub); }
+[data-theme="light"] :is(h1, h2, h3, p, li, dd, dt, th, td, label, blockquote, figcaption) { word-break: keep-all; text-wrap: wrap; } /* Duo도 balance 없이 wrap */
+
+/* ── 색 — 흰 배경에서 대비 AA 이상, 앰버 텍스트는 쓰지 않는다 ─────────────────── */
+[data-theme="light"] { background: var(--light-bg); }
+[data-theme="light"] .benefits, .benefits[data-theme="light"] .bento-tile:not(.bento-tile--navy):not(.bento-tile--photo),
+[data-theme="light"] .cabin-spec, .cabins[data-theme="light"] .cabin-spec { background: var(--light-card); }
+/* 비교표 머리글: 회색 위 회색(대비 4.2) → 흰 칸 위 보조 회색 */
+.compare[data-theme="light"] .comparison-table thead th { color: var(--text-sub); background: var(--light-card); }
+/* 혜택 태그 '필수'의 테라코타, 첫 후기 카드의 앰버 이름 → 무채색 */
+.benefits[data-theme="light"] .bento-check em { color: var(--text-main); background: rgba(0, 0, 0, .07); }
+.benefits[data-theme="light"] .bento-check em.is-opt { color: var(--text-sub); background: rgba(0, 0, 0, .05); }
+.proof[data-theme="light"] .quotes figure:first-child figcaption { color: rgba(255, 255, 255, .72); }
+/* 좌석 32A: 앰버 위 흰 글자(대비 2.0) → 짙은 글자 */
+.benefits[data-theme="light"] .bento-seats__map i.is-mine b { color: #000000; }
+/* 진행 막대 라벨·보조 글자는 차가운 회색으로 */
+[data-theme="light"] :is(.continuity-meter li, .quotes figcaption, .marketing-heading label, .cabin-spec dt, .flight-search label span, footer p, footer small) { color: var(--text-sub); }
+/* 버튼 — 라이트 구간에서는 앰버 대신 짙은 면 + 흰 글자 (포인트 앰버는 번호·선에만) */
+[data-theme="light"] :is(.button--primary, .flight-search button) { color: #ffffff; background: #000000; }
+[data-theme="light"] :is(.button--primary, .flight-search button):hover { background: #000000; }
+body.grounded .local-nav .nav-cta { color: #ffffff; background: #000000; } /* day.css의 글자색 규칙(.local-nav 포함)보다 구체적으로 */
+body.grounded .local-nav .nav-cta:hover { background: #000000; }
+
+/* ── 다크 ↔ 라이트 전환 — 글자색도 배경과 같은 타이밍으로 ─────────────────── */
+/* 내비·맨 위로 버튼은 글자와 바탕이 함께 반전되므로 서서히 바꾸면 중간 프레임에서 글자가 묻힌다 → 색은 한 번에 바꾼다 */
+.local-nav { transition: opacity .5s, visibility .5s; }
+.local-nav :is(a, span) { transition: none; }
+.to-top { transition: opacity .4s ease, visibility .4s, transform .4s cubic-bezier(.22, .61, .36, 1); }
+/* 예약하기 버튼: 앰버 ↔ 짙은 면은 중간 톤을 지날 때 글자가 묻히므로 색은 한 번에 바꾼다 (크기 변화만 애니메이션) */
+.local-nav .nav-cta, body.grounded .local-nav .nav-cta { transition: transform .25s; }
+/* 카드 본문 — Duo 밝은 구간의 feature-card-body는 보조 회색이 아니라 본문색(#000000) */
+.benefits[data-theme="light"] .bento-tile:not(.bento-tile--navy):not(.bento-tile--photo) p { color: var(--text-main); }
+[data-theme="light"] .booking-message { font: var(--type-caption); color: var(--text-sub); }

@@ -1,0 +1,144 @@
+/* 혜택 섹션 — 가로 레일 대신 12칸 벤토 그리드. 크기가 다른 타일이 섞이고, 타일마다 작은 UI 목업이나 사진을 품는다 */
+.benefit-bento {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 20px;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding-bottom: 0;
+  overflow: visible;
+  scroll-snap-type: none;
+}
+.benefit-bento .bento-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 32px;
+  min-height: clamp(440px, 42vw, 560px);
+  padding: clamp(24px, 3vw, 44px);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 32px;
+  background: var(--bg-raised);
+  scroll-snap-align: none;
+}
+.bento-tile--7 { grid-column: span 7; }
+.bento-tile--5 { grid-column: span 5; }
+.bento-tile--12 { grid-column: span 12; }
+.bento-tile--navy { background: radial-gradient(90% 70% at 100% 100%, rgba(175, 175, 175, .16), transparent 70%), var(--bg-night); }
+
+.bento-tile__copy { position: relative; z-index: 2; max-width: 460px; }
+.benefit-bento h3 { margin: 0; word-break: keep-all; }
+.benefit-bento p { min-height: 0; margin: 14px 0 0; color: var(--text-sub); word-break: keep-all; }
+.benefit-bento button { margin-top: 22px; color: var(--text-main); }
+
+/* 사진 타일 — 사진 위에 문구, 아래쪽만 어둡게 */
+.benefit-bento .bento-tile--photo { justify-content: flex-end; }
+.bento-tile--photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: saturate(.8) brightness(.85); transition: transform 1.4s cubic-bezier(.22, .61, .36, 1); }
+.bento-tile--photo:hover img { transform: scale(1.04); }
+.bento-tile--photo::before { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(to top, rgba(0, 0, 0, .9), rgba(0, 0, 0, .15) 62%); }
+.bento-tile--photo p { color: rgba(255, 255, 255, .72); }
+.bento-tile--wide { min-height: clamp(320px, 32vw, 440px); }
+.bento-tile--wide img { object-position: 50% 62%; }
+/* 임시 이미지 타일 — 글이 없으니 아래 어둡게 깔던 막도 없앤다 */
+.bento-tile--placeholder::before { display: none; }
+.bento-tile--placeholder img { filter: none; }
+
+/* 사전 콘텐츠 — 담아 둔 콘텐츠 선반 */
+.bento-shelf { display: grid; gap: 18px; }
+.bento-shelf__row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.bento-poster { display: grid; grid-template-rows: auto 1fr; gap: 10px; margin: 0; }
+.bento-poster b { display: grid; place-items: center; aspect-ratio: 4 / 3; border-radius: 16px; color: rgba(255, 255, 255, .85); background: linear-gradient(135deg, #000000, #000000); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .06); }
+.bento-poster--live b { background: linear-gradient(135deg, #000000, #000000); }
+.bento-poster--film b { background: linear-gradient(135deg, #000000, #000000); }
+.bento-poster--audio b { background: linear-gradient(135deg, #000000, #000000); }
+.bento-poster small { display: block; margin-top: 2px; color: var(--text-sub); }
+.bento-pill { display: inline-flex; align-items: center; gap: 10px; justify-self: start; min-height: 40px; padding: 0 18px; border: 1px solid var(--amber); border-radius: 999px; }
+.bento-pill i { width: 14px; height: 14px; background: repeating-linear-gradient(90deg, var(--text-main) 0 2px, transparent 2px 4px), repeating-linear-gradient(0deg, var(--text-main) 0 2px, transparent 2px 4px); background-blend-mode: multiply; opacity: .85; }
+
+/* 좌석 지정 — 3·3 배열 좌석도, 내 자리만 앰버 */
+.bento-seats { display: grid; gap: 16px; }
+.bento-seats__map { display: grid; grid-template-columns: repeat(3, 1fr) .6fr repeat(3, 1fr); gap: 8px; max-width: 340px; }
+.bento-seats__map i { position: relative; display: block; aspect-ratio: 1; border-radius: 8px 8px 5px 5px; background: rgba(255, 255, 255, .1); box-shadow: inset 0 -3px 0 rgba(0, 0, 0, .25); }
+.bento-seats__map i.is-taken { background: rgba(255, 255, 255, .28); }
+.bento-seats__map i.is-mine { background: var(--amber); box-shadow: 0 0 22px rgba(175, 175, 175, .45); }
+.bento-seats__map i.is-mine b { position: absolute; inset: 0; display: grid; place-items: center; color: var(--bg-deep); }
+.bento-seats__legend { display: flex; gap: 18px; margin: 0; color: var(--text-sub); }
+.bento-seats__legend span { display: inline-flex; align-items: center; gap: 6px; }
+.bento-seats__legend i { width: 10px; height: 10px; border-radius: 3px; background: rgba(255, 255, 255, .28); }
+.bento-seats__legend i.is-mine { background: var(--amber); }
+
+/* 도착 패스트트랙 — 우선순위 체크리스트 */
+.bento-check { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.bento-check li { display: grid; grid-template-columns: 22px 1fr auto; align-items: center; gap: 14px; padding: 14px 16px; border-radius: 14px; background: rgba(255, 255, 255, .05); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .05); }
+.bento-check small { display: block; margin-top: 2px; color: var(--text-sub); }
+.bento-check i { position: relative; width: 20px; height: 20px; border: 1.5px solid rgba(255, 255, 255, .35); border-radius: 6px; }
+.bento-check .is-done i { border-color: var(--amber); background: var(--amber); }
+.bento-check .is-done i::after { content: ""; position: absolute; top: 3px; left: 6px; width: 5px; height: 9px; border: solid var(--bg-deep); border-width: 0 2px 2px 0; transform: rotate(45deg); }
+.bento-check .is-done span { color: var(--text-sub); text-decoration: line-through; }
+.bento-check em { padding: 3px 9px; border: 1px solid rgba(175, 175, 175, .5); border-radius: 999px; color: var(--amber); font-style: normal; }
+.bento-check em.is-opt { border-color: var(--line); color: var(--text-sub); }
+
+@media (max-width: 1000px) {
+  .bento-tile--7, .bento-tile--5 { grid-column: span 12; }
+}
+@media (max-width: 734px) {
+  .benefit-bento { gap: 14px; }
+  .benefit-bento .bento-tile { min-height: 0; border-radius: 24px; }
+  .bento-tile--photo { min-height: 380px !important; }
+  .bento-shelf__row { gap: 8px; }
+}
+
+/* 마지막 타일 확장 — 벤토 타일 자리에서 시작해 스크롤하면 화면을 꽉 채운다.
+   카드는 처음부터 화면 크기이고, clip-path로 타일 크기만 보이다가 넓어진다(레이아웃 재계산 없음). --p: 0 → 1 */
+.bento-expand {
+  --edge: max(5vw, 24px);
+  --tile-h: clamp(440px, 42vw, 560px);
+  --p: 0;
+  position: relative;
+  height: 260vh;
+  margin: calc(20px - (100vh - var(--tile-h)) / 2) calc(-1 * var(--edge)) 0; /* 위 타일과 20px 간격, 섹션 좌우 여백 밖으로 */
+}
+/* sticky가 화면 기준으로 붙도록 hidden 대신 clip (스크롤 컨테이너를 만들지 않는다) */
+.benefits { overflow: clip; }
+.bento-expand__sticky { position: sticky; top: 0; height: 100vh; overflow: hidden; container-type: size; }
+.bento-expand__card {
+  --tile-w: min(1180px, 100cqw - 2 * var(--edge));
+  --ix: calc((100cqw - var(--tile-w)) / 2 * (1 - var(--p)));
+  --iy: calc((100cqh - var(--tile-h)) / 2 * (1 - var(--p)));
+  position: absolute; inset: 0; margin: 0; color: #fff; background: #000;
+  clip-path: inset(var(--iy) var(--ix) round calc(28px * (1 - var(--p))));
+}
+.bento-expand__card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform: scale(calc(1.12 - .12 * var(--p))); filter: none; }
+/* 문구는 카드 왼쪽 아래 모서리를 따라 움직인다 */
+.bento-expand__copy { position: absolute; z-index: 1; left: calc(var(--ix) + clamp(24px, 3vw, 44px)); bottom: calc(var(--iy) + clamp(24px, 3vw, 44px)); max-width: 460px; }
+.bento-expand__copy h3 { margin: 0; color: #fff; word-break: keep-all; }
+.bento-expand__copy p { margin: 14px 0 0; color: rgba(255, 255, 255, .72); word-break: keep-all; }
+@media (max-width: 734px) {
+  .bento-expand { --tile-h: 380px; height: 220vh; margin-top: calc(14px - (100vh - var(--tile-h)) / 2); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bento-expand { height: auto; margin-top: 20px; }
+  .bento-expand__sticky { position: relative; height: var(--tile-h); }
+}
+
+/* 엔딩 — 카드가 화면을 다 채운 뒤(--p 0.7→1) 사진이 살짝 어두워지고 로고·버튼이 떠오른다 */
+.bento-expand { --show: clamp(0, (var(--p) - .7) / .3, 1); }
+.bento-expand__card::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: rgba(0, 0, 0, calc(.42 * var(--show))); }
+.ending-cta { position: absolute; inset: 0; z-index: 2; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: clamp(28px, 4vh, 44px);
+  opacity: var(--show); transform: translateY(calc(16px * (1 - var(--show)))); pointer-events: none; }
+.bento-expand.is-full .ending-cta { pointer-events: auto; }
+/* 로고 — 히어로(.wh-logo)와 같은 크기·자간 */
+.ending-cta__logo { margin: 0; color: #fff; font: 600 clamp(20px, 2.1vw, 40px)/1 -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", sans-serif; letter-spacing: .42em; white-space: nowrap;
+  filter: blur(calc(14px * (1 - var(--show)))); }
+.ending-cta__logo span { display: block; padding-left: .42em; }
+.ending-cta__btn { display: inline-flex; align-items: center; justify-content: center; height: 48px; padding: 0 28px; border-radius: 999px; background: #fff; color: #000;
+  font: 600 16px/1 var(--font-text, "Pretendard", system-ui, sans-serif); letter-spacing: -.01em; text-decoration: none; transition: transform .25s ease, background .25s ease; }
+.ending-cta__btn:hover { transform: scale(1.03); background: #f2f2f2; }
+.ending-cta__btn:focus-visible { outline: 1px solid #fff; outline-offset: 4px; }
+@media (max-width: 734px) { .ending-cta__logo { font-size: clamp(18px, 5vw, 28px); } }
+@media (prefers-reduced-motion: reduce) { .bento-expand { --show: 1; } .ending-cta { pointer-events: auto; } }
+
+/* 엔딩이 페이지의 마지막 화면 — 섹션 아래 여백을 없애 확대된 사진에서 스크롤이 끝난다 */
+#benefits { padding-bottom: 0 !important; }

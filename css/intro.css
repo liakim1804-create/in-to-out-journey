@@ -1,0 +1,150 @@
+/* 오프닝 인트로 — 야간 정면 이륙 → 창문 진입 → 기내
+   "어둠 위에, 필요한 순간에만 빛을." 화면 대부분은 어둡고 빛만 따뜻하게 살아 있다 */
+:root {
+  --intro-display: "Archivo", "Inter", sans-serif;
+  --intro-text: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, sans-serif;
+  --intro-ease: cubic-bezier(.22, .61, .36, 1);
+}
+
+/* 인트로 동안에는 기존 내비·진행 표시를 숨기고, 인트로 전용 내비를 쓴다 */
+.local-nav, .flight-progress { transition: opacity .5s var(--intro-ease), visibility .5s; }
+.intro-active .local-nav, .intro-active .flight-progress { opacity: 0; visibility: hidden; }
+.intro-nav { position: fixed; inset: 0 0 auto; z-index: 95; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 18px clamp(16px, 4vw, 48px); color: var(--text-main); pointer-events: none; transition: opacity .5s var(--intro-ease), visibility .5s; }
+.intro-nav > * { pointer-events: auto; }
+html:not(.intro-active) .intro-nav { opacity: 0; visibility: hidden; }
+.intro-nav__lang { display: flex; align-items: center; gap: 8px; }
+.intro-nav__lang span { opacity: .4; }
+.intro-nav__lang button { padding: 8px 2px; border: 0; background: none; color: inherit; font: inherit; letter-spacing: inherit; opacity: .5; cursor: pointer; transition: opacity .3s; }
+.intro-nav__lang button[aria-pressed="true"], .intro-nav__lang button:hover { opacity: 1; }
+.intro-nav__logo { color: inherit; padding-left: .46em; text-decoration: none; }
+.intro-nav__menu { justify-self: end; display: grid; align-content: center; gap: 7px; width: 44px; height: 44px; padding: 0 9px; border: 0; background: none; cursor: pointer; }
+.intro-nav__menu span { display: block; height: 1px; background: var(--text-main); transition: transform .4s var(--intro-ease), width .4s var(--intro-ease); }
+.intro-nav__menu span:last-child { width: 62%; justify-self: end; }
+.intro-nav__menu[aria-expanded="true"] span:first-child { transform: translateY(4px) rotate(45deg); }
+.intro-nav__menu[aria-expanded="true"] span:last-child { width: 100%; transform: translateY(-4px) rotate(-45deg); }
+.intro-menu { position: fixed; inset: 0; z-index: 94; display: grid; place-content: center; gap: 18px; padding: 24px; background: rgba(0, 0, 0, .94); backdrop-filter: blur(14px); opacity: 0; visibility: hidden; transition: opacity .5s var(--intro-ease), visibility .5s; text-align: center; }
+.intro-menu.is-open { opacity: 1; visibility: visible; }
+.intro-menu a { color: var(--text-main); text-decoration: none; opacity: .7; transition: opacity .3s, color .3s; }
+.intro-menu a:hover, .intro-menu a:focus-visible { color: var(--amber); opacity: 1; }
+
+/* 스테이지 */
+.intro { position: relative; height: 100vh; height: 100svh; background: var(--bg-deep); }
+.intro__stage { position: relative; height: 100vh; height: 100svh; overflow: hidden; background: var(--bg-deep); }
+.intro__canvas { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
+.intro__canvas--end { opacity: 0; transition: opacity 1.4s var(--intro-ease); }
+.intro__fx { position: absolute; inset: 0; pointer-events: none; }
+/* 창문 진입 때의 앰버 번짐과 렌즈 플레어 */
+.intro__bloom { background: radial-gradient(62% 62% at 50% 50%, rgba(194, 194, 194, .8), rgba(175, 175, 175, .55) 36%, rgba(101, 101, 101, .26) 70%, rgba(0, 0, 0, 0)); mix-blend-mode: screen; opacity: 0; }
+.intro__fade { top: auto; height: 34%; background: linear-gradient(rgba(0, 0, 0, 0), var(--bg-deep) 92%); opacity: 0; }
+.intro__flare { opacity: 0; mix-blend-mode: screen; }
+.intro__flare::before { content: ""; position: absolute; top: 50%; left: -10%; right: -10%; height: 2px; background: linear-gradient(90deg, transparent, rgba(175, 175, 175, .25) 20%, rgba(255, 255, 255, .95) 50%, rgba(175, 175, 175, .25) 80%, transparent); box-shadow: 0 0 22px 5px rgba(175, 175, 175, .32); filter: blur(.6px); }
+.intro__flare::after { content: ""; position: absolute; top: calc(50% - 7vmin); left: 63%; width: 14vmin; height: 14vmin; border-radius: 50%; background: radial-gradient(circle, rgba(175, 175, 175, 0) 52%, rgba(175, 175, 175, .2) 62%, rgba(101, 101, 101, 0) 72%); box-shadow: -34vmin 9vmin 0 -5vmin rgba(101, 101, 101, .14); }
+/* 컬러 그레이딩: 그림자는 남색, 하이라이트는 앰버 */
+.intro__grade { background: linear-gradient(180deg, rgba(0, 0, 0, .4), rgba(0, 0, 0, 0) 46%, rgba(101, 101, 101, .14)); mix-blend-mode: soft-light; }
+.intro__vignette { background: radial-gradient(125% 95% at 50% 55%, transparent 52%, rgba(0, 0, 0, .72)); }
+.intro__grain { inset: -40%; background-image: var(--grain); opacity: .06; mix-blend-mode: overlay; animation: intro-grain .9s steps(5) infinite; }
+@keyframes intro-grain { 0% { transform: translate(0, 0); } 20% { transform: translate(-4%, 3%); } 40% { transform: translate(3%, -2%); } 60% { transform: translate(-2%, -4%); } 80% { transform: translate(4%, 2%); } 100% { transform: translate(0, 0); } }
+
+/* 카피 */
+.intro__invite { position: absolute; z-index: 2; top: 31%; right: 0; left: 0; margin: 0; color: var(--text-main); text-align: center; text-shadow: 0 0 22px rgba(0, 0, 0, .7); }
+.intro__copy { position: absolute; z-index: 2; right: clamp(16px, 6vw, 96px); bottom: 15%; left: clamp(16px, 6vw, 96px); margin: 0; opacity: 0; color: var(--text-main); text-align: center; text-shadow: 0 2px 34px rgba(0, 0, 0, .8); word-break: keep-all; }
+.intro__copy span { opacity: .14; }
+/* 투명도는 스크립트가 컨테이너에, 움직임은 CSS가 svg에 — 서로 덮어쓰지 않게 */
+.intro__cue { position: absolute; z-index: 2; bottom: 26px; left: 50%; width: 20px; height: 44px; margin-left: -10px; color: var(--text-main); }
+.intro__cue svg { width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 1; stroke-linecap: round; animation: intro-cue 2.4s var(--intro-ease) infinite; }
+@keyframes intro-cue { 0%, 100% { transform: translateY(0); opacity: .55; } 50% { transform: translateY(7px); opacity: 1; } }
+
+/* Skip intro */
+.intro-skip { position: fixed; z-index: 95; right: clamp(16px, 3vw, 32px); bottom: clamp(16px, 3vw, 28px); padding: 11px 18px; border: 1px solid rgba(255, 255, 255, .32); border-radius: 999px; background: rgba(0, 0, 0, .4); backdrop-filter: blur(10px); color: var(--text-main); cursor: pointer; transition: opacity .4s var(--intro-ease), visibility .4s, border-color .3s; }
+.intro-skip:hover { border-color: var(--amber); }
+.intro-skip.is-hidden, html:not(.intro-active) .intro-skip { opacity: 0; visibility: hidden; }
+.intro-nav :focus-visible, .intro-skip:focus-visible, .intro-menu :focus-visible { outline: 1px solid var(--amber); outline-offset: 4px; }
+
+@media (max-width: 767px) {
+  .intro-nav { padding: 12px 14px; }
+  .intro__invite { top: 27%; }
+  .intro__copy { bottom: 12%; }
+  .intro__cue { bottom: 18px; }
+}
+
+/* 모션 줄이기: 시퀀스 없이 첫 장면 → 마지막 장면 페이드 */
+.is-reduced .intro { height: 200vh; }
+.is-reduced .intro__stage { position: sticky; top: 0; }
+.is-reduced .intro__bloom, .is-reduced .intro__flare, .is-reduced .intro__cue { display: none; }
+.is-reduced .intro__grain { animation: none; }
+.is-reduced .intro__invite { transition: opacity 1s var(--intro-ease); }
+.is-reduced .intro__copy { transition: opacity 1.2s var(--intro-ease) .3s; }
+.is-reduced .intro.is-end .intro__canvas--end, .is-reduced .intro.is-end .intro__copy { opacity: 1; }
+.is-reduced .intro.is-end .intro__invite { opacity: 0; }
+
+/* ── 히어로 모드 (INTRO_MODE: "hero") — 창문 히어로 ────────────────────────────
+   층: 밤하늘(sky) → 블라인드(유리 안) → 기내 벽(유리를 뚫은 창문 이미지) → 비네팅 → 로고
+   창문 이미지(3840×2160)와 같은 비율의 상자가 화면을 덮고, 안쪽 위치는 모두 이미지 기준 %로 잡는다.
+   확대할 때 낮은 해상도로 굳지 않도록 will-change: transform을 쓰지 않는다. */
+.intro-hero { position: relative; height: 300vh; background: #030304; }
+html:not(.intro-seq) .intro { height: auto; }
+html:not(.intro-seq) .intro__stage { display: none; }
+.intro-seq .intro-hero { display: none; }
+
+.intro-hero__scene { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; isolation: isolate; container-type: size; background: #030304; }
+
+.wh-box {
+  --bw: max(100cqw, 177.78cqh);
+  position: absolute; left: calc(50% - var(--bw) / 2); top: calc(50% - var(--bw) * .28125);
+  width: var(--bw); aspect-ratio: 16 / 9;
+  transform-origin: 49.95% 48.75%; /* 유리 중심 */
+}
+.wh-box img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
+.wh-sky { z-index: 0; }
+.wh-cabin { z-index: 1; }
+/* 창틀 정중앙 — 원본에서 창틀은 이미지 위끝(0%)부터 91.7%까지라 중심이 45.8%에 있다.
+   창틀 전체가 화면 높이의 약 90%가 되게 크기를 정하고, 그 중심을 화면 가운데에 둔다. 남는 곳은 벽 색으로 채운다 */
+.wh-cabin {
+  --bw: calc(98cqh * 16 / 9);
+  top: calc(50% - var(--bw) * .5625 * .458);
+  box-shadow: 0 0 0 100vmax #080707;
+}
+.wh-cabin::before { content: ""; position: absolute; inset: 0; z-index: 3; pointer-events: none;
+  background: linear-gradient(#080707, rgba(8, 7, 7, 0) 5%), linear-gradient(90deg, #070606, rgba(7, 6, 6, 0) 4%, rgba(7, 6, 6, 0) 96%, #070606); }
+
+/* 유리 — 마스크로 창문 모양만 남긴다. 블라인드와 유리 반사가 여기 안에 산다 */
+.wh-glass { position: absolute; inset: 0; -webkit-mask: url("../assets/hero/glass-mask.png?v=4") 0 0 / 100% 100% no-repeat; mask: url("../assets/hero/glass-mask.png?v=4") 0 0 / 100% 100% no-repeat; }
+.wh-glass::after { content: ""; position: absolute; left: 34.35%; top: 13.4%; width: 31.2%; height: 70.2%; pointer-events: none;
+  background: linear-gradient(112deg, rgba(255, 255, 255, .07), rgba(255, 255, 255, 0) 34%), radial-gradient(70% 50% at 50% 0%, rgba(225, 169, 116, .1), transparent 70%);
+  box-shadow: inset 0 0 3.2cqw rgba(0, 0, 0, .55); }
+/* 블라인드 — 내려온 상태에서 시작해 하우징 속으로 올라간다(손잡이만 살짝 남는다) */
+.wh-shade { position: absolute; left: 34.35%; top: 12%; width: 31.2%; height: 72.1%; transform-origin: 50% 0;
+  background:
+    radial-gradient(80% 38% at 50% 0%, rgba(225, 169, 116, .16), transparent 70%),
+    repeating-linear-gradient(180deg, rgba(255, 255, 255, .012) 0 2px, rgba(0, 0, 0, .02) 2px 4px),
+    linear-gradient(180deg, #3b3936 0%, #2e2c2a 55%, #252422 100%);
+  box-shadow: inset 0 -1px 0 rgba(255, 255, 255, .1), inset 0 0 2.4cqw rgba(0, 0, 0, .5); }
+.wh-shade__grip { position: absolute; left: 32%; right: 32%; bottom: 2.6%; height: 2.8%; border-radius: 999px;
+  background: linear-gradient(180deg, #4d4a46, #252321); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .14), 0 .2cqw .5cqw rgba(0, 0, 0, .6); }
+
+.wh-wall { z-index: 1; }
+
+.wh-vignette { position: absolute; inset: 0; z-index: 2; pointer-events: none; background: radial-gradient(circle at 50% 52%, rgba(0, 0, 0, 0) 28%, rgba(0, 0, 0, .5)); }
+
+/* 끝부분: 하늘 아래를 다음 섹션의 검정으로 녹인다 */
+.wh-fade { position: absolute; inset: 35% 0 0; z-index: 2; pointer-events: none; opacity: 0; background: linear-gradient(180deg, rgba(0, 0, 0, 0), #000 92%); }
+
+/* 로고만 둔다 — 창문 한가운데 밤하늘 위 */
+.wh-logo { position: absolute; z-index: 3; left: 50%; top: calc(50% + 2.9cqh); /* 유리 중심 — 창틀 중심보다 살짝 아래 */ margin: 0; transform: translate(-50%, -50%); pointer-events: none;
+  color: #ffffff; font: 600 clamp(20px, 2.1cqw, 40px)/1 -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", sans-serif; letter-spacing: .42em; white-space: nowrap; }
+.wh-logo span { display: block; padding-left: .42em; }
+
+/* 세로 화면: 창문이 화면 폭의 약 80%가 되게 키우고, 남는 위아래는 벽 가장자리색으로 채운다 */
+@media (max-aspect-ratio: 1/1) {
+  .wh-cabin { --bw: 250cqw; box-shadow: 0 0 0 100vmax #060606; }
+  /* 이미지 위아래 가장자리를 바깥 색으로 녹여 이음새가 안 보이게 */
+  .wh-cabin::before, .wh-cabin::after { content: ""; position: absolute; left: 0; right: 0; z-index: 3; height: 14%; pointer-events: none; }
+  .wh-cabin::before { top: 0; background: linear-gradient(#060606, rgba(6, 6, 6, 0)); }
+  .wh-cabin::after { bottom: 0; background: linear-gradient(rgba(6, 6, 6, 0), #060606); }
+  .intro-hero { height: 240vh; }
+  .wh-logo { top: calc(50% + 4.15cqw); font-size: clamp(18px, 5cqw, 28px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .intro-hero { height: 100vh; }
+  .wh-shade { transform: translateY(-92%); }
+}

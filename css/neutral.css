@@ -1,0 +1,58 @@
+/* 앰버 제거 — 이미지(사진·빛 번짐) 밖의 버튼과 글자에는 앰버를 쓰지 않는다. 밤은 아이보리, 낮은 짙은 남흑색 */
+
+/* 주요 버튼: 밤 = 아이보리 면 + 짙은 글자 / 낮 = 짙은 면 + 밝은 글자 (typography-light.css) */
+.button--primary, .nav-cta, .flight-search button, .phone-screen > button {
+  color: #000000;
+  background: #ffffff;
+}
+.button--primary:hover, .nav-cta:hover, .flight-search button:hover, .phone-screen > button:hover { background: #ffffff; }
+body.grounded .local-nav .nav-cta, [data-theme="light"] :is(.button--primary, .flight-search button) { color: #ffffff; background: #000000; }
+body.grounded .local-nav .nav-cta:hover, [data-theme="light"] :is(.button--primary, .flight-search button):hover { background: #000000; }
+
+/* 슬로건 IN TO OUT — 앰버 글자 → 본문색 */
+.intro-hero__slogan, .landing-slogan { color: var(--text-main); }
+
+/* 좌석 화면·휴대폰·기능 그림 속 버튼과 글자 */
+.screen-play { color: var(--text-main); background: rgba(255, 255, 255, .14); border: 0; }
+.toast-icon { color: var(--text-main); background: rgba(255, 255, 255, .12); }
+.feature-visual--meal small { color: #000000; background: #ffffff; }
+.feature-visual--meal b { color: var(--text-main); }
+.feature-visual--prepare i { color: var(--text-main); }
+.feature-visual--prepare i:not(:empty) { background: rgba(255, 255, 255, .16); }
+.prepare-rules summary span { color: var(--text-main); }
+.send-phone { color: var(--text-main); }
+
+/* 모드 탭의 선택 점, 포커스 링 */
+.mode-tabs button.is-active::after { background: var(--text-main); }
+:is(.gallery, .intro-nav, .intro-menu, .to-top, .mode__viewport) :focus-visible,
+.gallery button:focus-visible, .to-top:focus-visible, .intro-skip:focus-visible { outline-color: var(--text-main); }
+.intro-menu a:hover, .intro-menu a:focus-visible { color: var(--text-main); }
+
+/* 내비 링크 밑줄 */
+.section-links a::after { background: currentColor; }
+
+/* 무채색 전환 후, 흰 바탕 위에서 사라진 면을 옅은 회색(검정 투명도)으로 되살린다 */
+.cabins .ife-stage { background: #f5f5f5; }
+.cabins .ife .cabin-tabs { background: rgba(0, 0, 0, .05); }
+.cabins .ife-bubble { background: rgba(0, 0, 0, .05); box-shadow: none; }
+.cabins .ife-mock__screen { background: #050607 url("../assets/overview/start-screen.png") center / cover no-repeat; }
+
+/* 좌석 비교 — 다크 모드. 흰 섹션용 변수를 밤 색으로 되돌린다 (앞뒤 밤 섹션과 이어지게) */
+.cabins.cabins--dark {
+  --text-main: #ffffff; --text-sub: rgba(255, 255, 255, .56); --line: rgba(255, 255, 255, .12);
+  --bg-raised: #121314; --bg-night: #000; --bg-deep: #000; --bg-base: #000; --light-card: #0e0f11;
+  color: #fff; background: #000;
+}
+.cabins--dark #cabins-title { color: #fff; }
+.cabins--dark .ife-stage { background: #0e0f11; box-shadow: none; border: 0; }
+.cabins--dark .ife .cabin-tabs { background: #333336; border-color: transparent; }
+.cabins--dark .cabin-tabs button { color: rgba(255, 255, 255, .62); }
+.cabins--dark .cabin-tabs button.is-active { color: #000; background: #fff; box-shadow: none; }
+.cabins--dark .ife .cabin-tabs button:focus-visible { outline-color: #fff; }
+.cabins--dark .ife-bubble { background: rgba(255, 255, 255, .08); box-shadow: none; border: 0; }
+.cabins--dark .ife-bubble__text, .cabins--dark .ife-bubble__specs dd { color: #fff; }
+.cabins--dark .ife-bubble__specs dt { color: rgba(255, 255, 255, .56); }
+
+/* MOMEN 로고 글자 — SF Pro, 자간은 기본값(넓게 벌리지 않음) */
+.wh-logo, .ending-cta__logo { letter-spacing: 0 !important; }
+.wh-logo span, .ending-cta__logo span { padding-left: 0 !important; }

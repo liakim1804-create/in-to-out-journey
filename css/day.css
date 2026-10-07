@@ -1,0 +1,77 @@
+/* 도착 이후는 낮 — 밤 비행(검정)에서 여행지(흰색)로 색감이 바뀐다.
+   섹션 안에서 색 변수만 다시 정의해 기존 규칙을 그대로 뒤집고, 일부러 어두운 카드만 따로 남긴다 */
+.proof, .compare, .benefits, .cabins, .booking, footer {
+  --text-main: #000000;
+  --text-sub: #6f6f6f;
+  --line: rgba(0, 0, 0, .12);
+  --bg-raised: #ffffff;
+  --bg-night: #ffffff;
+  --bg-deep: #ffffff;
+  --bg-base: #ffffff;
+  color: var(--text-main);
+  background: #ffffff;
+}
+.compare, .cabins { background: #ffffff; }
+
+/* 파리 사진 아래쪽을 흰색으로 녹여 다음 섹션과 잇는다 */
+/* 사진 레이어는 스크롤하며 커지므로(1.08배) 커지지 않는 프레임 쪽에 둔다 */
+.travel-frame::after { content: ""; position: absolute; z-index: 3; right: 0; bottom: 0; left: 0; height: 42%; background: linear-gradient(rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, .3) 30%, rgba(255, 255, 255, .68) 58%, rgba(255, 255, 255, .92) 82%, #ffffff 100%); pointer-events: none; } /* 끝으로 갈수록 천천히 — 경계선 착시를 줄인다 */
+
+/* 내비와 진행 표시도 낮으로 */
+.local-nav, .flight-progress { transition: background .6s ease, color .6s ease, border-color .6s ease, opacity .5s, visibility .5s; }
+body.grounded .local-nav { color: #000000; background: rgba(255, 255, 255, .82); border-color: rgba(0, 0, 0, .1); }
+body.grounded .local-nav .brand, body.grounded .local-nav .nav-cta { color: #000000; }
+body.grounded .section-links a { color: rgba(0, 0, 0, .55); }
+body.grounded .section-links a.is-active { color: #000000; }
+body.grounded .flight-progress { color: #000000; background: rgba(255, 255, 255, .86); border-color: rgba(0, 0, 0, .12); }
+.grounded .route-meta strong { color: #000000; }
+.grounded .route-track { background: rgba(0, 0, 0, .14); }
+.grounded .route-time { color: #6f6f6f; }
+
+/* 후기 — 첫 카드만 밤의 남색으로 남긴다 */
+.quotes figure:first-child { color: #ffffff; background: #000000; }
+.quotes figure:first-child figcaption { color: var(--amber); }
+
+/* 비교표 */
+.comparison-table, .continuity-meter > div { background: rgba(0, 0, 0, .04); }
+.comparison-table thead th { background: #ffffff; }
+
+/* 혜택 벤토 — 밝은 카드 위 목업, 남색·사진 카드는 어둡게 */
+.benefits .bento-tile { border-color: rgba(0, 0, 0, .08); box-shadow: 0 1px 0 rgba(0, 0, 0, .03); }
+.benefits .bento-tile--navy, .benefits .bento-tile--photo { --text-main: #ffffff; --text-sub: #909090; color: #ffffff; border-color: transparent; }
+.benefits .bento-tile--navy { background: radial-gradient(90% 70% at 100% 100%, rgba(175, 175, 175, .16), transparent 70%), #000000; }
+.benefits .bento-check li { background: #ffffff; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .06); }
+.benefits .bento-check i { border-color: rgba(0, 0, 0, .3); }
+.benefits .bento-check .is-done i::after { border-color: #fff; }
+.benefits .bento-check em { color: #656565; border-color: rgba(101, 101, 101, .4); }
+
+/* 객실 — 사진 위 글자는 밝게 */
+.cabin-color { color: #ffffff; }
+.cabin-tabs button.is-active { color: #ffffff; background: #000000; }
+
+/* 예약 */
+.booking { background: #ffffff; }
+.booking-glow { background: radial-gradient(circle, rgba(175, 175, 175, .3), rgba(175, 175, 175, .08) 40%, transparent 68%); }
+.flight-search { border-color: rgba(0, 0, 0, .12); background: rgba(0, 0, 0, .08); }
+.flight-search label { background: #fff; }
+.flight-search label span { color: #6f6f6f; }
+.flight-search input { color: #000000; color-scheme: light; }
+.flight-search button { color: #000000; background: #fff; }
+
+/* 푸터 */
+footer { color: #6f6f6f; border-top-color: rgba(0, 0, 0, .1); }
+footer .brand { color: #000000; }
+
+/* 밤의 비네팅·그레인은 낮에선 회색 막이 되므로 걷어낸다 */
+body::after, body::before { transition: opacity .8s ease; }
+body.grounded::after { opacity: 0; }
+body.grounded::before { opacity: .04; }
+
+/* 버튼 — 낮에는 어두운 채움 없이 앰버 테두리만 */
+body.grounded .nav-cta, .booking .button--primary, .cabins .button--primary { color: #000000; background: transparent; }
+.cabin-spec dt { color: #6f6f6f; }
+
+/* 파리 섹션 바탕 — 고정 프레임과 다음 섹션 사이 1px 틈에 남색이 비치지 않게 */
+.travel { background: #ffffff; }
+/* 경계가 소수점 위치에 걸릴 때 사진·페이드가 반씩 섞인 어두운 1px 줄이 생기므로, 다음 섹션을 2px 겹쳐 덮는다 */
+.benefits { position: relative; z-index: 1; margin-top: -2px; padding-top: 9vh !important; } /* 착륙 섹션이 흰색으로 끝나므로 위 여백을 줄여 바로 이어지게 */

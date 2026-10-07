@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MOMEN IFE — Start</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="proto.css?v=1006215408">
+<style>
+/* 시작 화면 — 탑승 직후 언어와 모드를 고른다 */
+.stage::before {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  background: radial-gradient(1100px 520px at 50% -8%, rgba(225, 169, 116, .16), transparent 70%),
+              linear-gradient(180deg, #050607 0%, var(--c-950) 50%, var(--c-900) 100%);
+}
+.topbar { position: absolute; left: 64px; right: 64px; top: 40px; height: 56px; display: flex; align-items: center; justify-content: space-between; }
+.logo { font: 700 22px/1 var(--font); letter-spacing: .3em; }
+.langs { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center; }
+.langs button { position: relative; padding: 10px 28px; font: 500 17px/1.2 var(--font); letter-spacing: -0.01em; color: var(--text-3); transition: color .2s var(--ease); }
+.langs button + button::before { content: ""; position: absolute; left: 0; top: 50%; width: 1px; height: 16px; margin-top: -8px; background: var(--c-700); }
+.langs button:hover { color: var(--text-2); }
+.langs button[aria-pressed="true"] { color: var(--text-1); font-weight: 600; }
+.tools { display: flex; align-items: center; gap: 12px; }
+.pair { height: 52px; padding: 0 22px 0 18px; border-radius: 999px; display: inline-flex; align-items: center; gap: 10px; font: 500 16px/1 var(--font); letter-spacing: -0.01em; color: var(--text-1); background: var(--glass); box-shadow: inset 0 0 0 var(--hair, 1px) var(--hairline); -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px); transition: background .2s var(--ease); }
+.pair:hover { background: var(--glass-strong); }
+.pair svg { width: 20px; height: 20px; color: var(--text-2); }
+.pair.is-on svg { color: var(--text-1); }
+.pair.is-on { box-shadow: var(--sel); background: transparent; }
+.pairing { display: grid; grid-template-columns: 232px 1fr; gap: 36px; align-items: center; }
+.pairing > svg { width: 232px; height: 232px; border-radius: 20px; background: var(--c-50); padding: 16px; }
+.pairing ol { list-style: none; counter-reset: s; display: grid; gap: 14px; }
+.pairing li { counter-increment: s; display: flex; gap: 14px; font: 500 18px/1.45 var(--font); letter-spacing: -0.012em; }
+.pairing li::before { content: counter(s); flex: none; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font: 600 14px/1 var(--font); box-shadow: inset 0 0 0 1px var(--c-600); color: var(--text-2); }
+.pairing__hint { margin-top: 18px; font: 400 16px/1.55 var(--font); color: var(--text-2); }
+.pairing__url { margin-top: 22px; font: 500 17px/1.4 var(--font); color: var(--text-2); word-break: break-all; }
+.pairing__code { margin-top: 22px; display: flex; align-items: baseline; gap: 14px; font: var(--t-small); color: var(--text-3); }
+.pairing__code b { font: 600 32px/1 var(--font); letter-spacing: .18em; color: var(--text-1); font-variant-numeric: tabular-nums; }
+.pairing__state { margin-top: 24px; display: flex; align-items: center; gap: 10px; font: var(--t-small); color: var(--text-2); }
+.pairing__state.is-done { color: var(--text-1); }
+.pairing__state svg { width: 18px; height: 18px; color: var(--text-1); }
+.spinner { width: 18px; height: 18px; border-radius: 50%; border: 2px solid rgba(244, 245, 246, .2); border-top-color: var(--c-50); animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.settings { width: 52px; height: 52px; }
+.settings svg { width: 22px; height: 22px; }
+
+.welcome { position: absolute; left: 0; right: 0; top: 196px; text-align: center; }
+.welcome h1 { font: var(--t-hero); letter-spacing: -0.035em; }
+.welcome h1 .seat { font-weight: 700; }
+.welcome h1 .honor { font-weight: 400; color: var(--text-2); }
+.welcome p { margin-top: 26px; font: 400 20px/1.6 var(--font); letter-spacing: -0.012em; color: var(--text-2); }
+
+/* 모드 — IN 3 + OUT 2 */
+.groups { position: absolute; left: 64px; right: 64px; bottom: 64px; display: grid; grid-template-columns: 3fr 2fr; gap: 40px; }
+.group__head { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; font: var(--t-label); letter-spacing: .09em; color: var(--text-3); }
+.group__head::after { content: ""; flex: 1; height: 1px; background: var(--hairline); }
+.group__list { display: grid; gap: 16px; }
+.group--in .group__list { grid-template-columns: repeat(3, 1fr); }
+.group--out .group__list { grid-template-columns: repeat(2, 1fr); }
+.mode {
+  position: relative; height: 420px; padding: 30px 26px 26px; border-radius: var(--r-lg); overflow: hidden; text-align: left;
+  display: flex; flex-direction: column; background: var(--c-850); box-shadow: inset 0 0 0 var(--hair, 1px) var(--hairline);
+  transition: box-shadow .35s var(--ease);
+}
+.mode img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .45; transition: opacity .4s var(--ease), transform .7s var(--ease); }
+.mode::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(9, 10, 12, .92) 0%, rgba(9, 10, 12, .55) 40%, rgba(9, 10, 12, .2) 64%, rgba(9, 10, 12, .75) 100%); }
+.mode > *:not(img) { position: relative; z-index: 1; }
+.mode:hover img { opacity: .6; transform: scale(1.04); }
+.mode.is-selected { box-shadow: var(--sel), 0 30px 70px -30px rgba(225, 169, 116, .55); }
+.mode.is-selected img { opacity: .72; }
+.mode__en { font: var(--t-label); letter-spacing: .1em; color: var(--text-3); display: flex; align-items: center; gap: 8px; }
+.mode.is-selected .mode__en { color: var(--text-1); }
+.mode__lead { margin-top: 18px; font: 400 16px/1.5 var(--font); letter-spacing: -0.01em; color: var(--text-2); }
+.mode__name { margin-top: 6px; font: 600 28px/1.25 var(--font); letter-spacing: -0.028em; }
+.go {
+  margin-top: auto; width: 56px; height: 56px; border-radius: 16px; display: grid; place-items: center;
+  background: rgba(9, 10, 12, .6); box-shadow: inset 0 0 0 var(--hair, 1px) var(--hairline);
+  -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); transition: background .25s var(--ease), color .25s var(--ease);
+}
+.go svg { width: 22px; height: 22px; }
+.mode.is-selected .go { background: var(--c-50); color: var(--c-950); box-shadow: none; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 2.8v2.4M12 18.8v2.4M21.2 12h-2.4M5.2 12H2.8M18.5 5.5l-1.7 1.7M7.2 16.8l-1.7 1.7M18.5 18.5l-1.7-1.7M7.2 7.2 5.5 5.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><rect x="6.5" y="2.5" width="11" height="19" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M10.5 18.5h3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  </defs>
+</svg>
+
+<main class="stage" id="stage" aria-label="MOMEN">
+  <header class="topbar">
+    <div class="logo" aria-label="MOMEN">MOMEN</div>
+    <nav class="langs" aria-label="Language" data-langs></nav>
+    <div class="tools"><button class="pair" type="button" data-pair><svg><use href="#i-phone"/></svg><span data-pair-label></span></button><button class="round-btn settings" type="button" data-i18n-label="settings" data-settings><svg><use href="#i-gear"/></svg></button></div>
+  </header>
+
+  <section class="welcome">
+    <h1 data-i18n="welcome_html"></h1>
+    <p data-i18n="welcome_sub"></p>
+  </section>
+
+  <div class="groups" role="radiogroup" aria-label="Mode">
+    <section class="group group--in"><div class="group__list" data-list="in"></div></section>
+    <section class="group group--out"><div class="group__list" data-list="out"></div></section>
+  </div>
+</main>
+
+<script src="../assets/vendor/qrcode.js"></script>
+<script src="proto.js?v=20261007b"></script>
+<script>
+(function () {
+  "use strict";
+  const P = window.Proto;
+  const IMG = { ENJOY: "enjoy-amber", REST: "rest-amber", WORK: "board-amber", PREPARE: "landing-airport", TRAVEL: "paris" };
+
+  // 언어 버튼
+  const langs = document.querySelector("[data-langs]");
+  langs.innerHTML = P.LANGS.map((l) => `<button type="button" lang="${l}" data-lang="${l}">${P.LANG_NAMES[l]}</button>`).join("");
+  const markLang = () => langs.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.lang === P.state.lang)));
+  langs.addEventListener("click", (e) => { const b = e.target.closest("[data-lang]"); if (b) P.setLang(b.dataset.lang); });
+
+  // 모드 카드
+  P.MODES.forEach((m) => {
+    const out = P.OUT_MODES.includes(m);
+    document.querySelector(`[data-list="${out ? "out" : "in"}"]`).insertAdjacentHTML("beforeend", `
+      <button class="mode" type="button" role="radio" data-mode="${m}">
+        <img src="../assets/scenes/${IMG[m]}.webp" alt="">
+        <span class="mode__lead" data-i18n="lead_${m}"></span>
+        <span class="mode__name" data-i18n="name_${m}"></span>
+        <span class="go" data-go><svg><use href="#i-arrow"/></svg></span>
+      </button>`);
+  });
+  const cards = [...document.querySelectorAll(".mode")];
+  const select = (m) => { P.state.mode = m; P.save(); cards.forEach((c) => { const on = c.dataset.mode === m; c.classList.toggle("is-selected", on); c.setAttribute("aria-checked", String(on)); }); };
+  const enter = (m) => { select(m); if (!P.modeOpen(m)) return; location.href = `home.html?mode=${m}`; };
+  cards.forEach((c) => c.addEventListener("click", (e) => {
+    // 화살표를 누르거나, 이미 고른 카드를 다시 누르면 홈으로
+    if (e.target.closest("[data-go]") || c.classList.contains("is-selected")) enter(c.dataset.mode); else select(c.dataset.mode);
+  }));
+
+  // 휴대폰 연결 — 기내 Wi-Fi 접속 후 QR 스캔 (프로토타입이라 2.6초 뒤 연결된 것으로 처리)
+  // 실제 QR — 폰으로 찍으면 이 프로토타입의 시작 화면이 열린다.
+  // localhost로 열었을 땐 폰이 접근할 수 없으니 같은 와이파이의 이 컴퓨터 주소(LAN_HOST)로 바꿔 넣는다. IP가 바뀌면 아래 값만 고치면 됨
+  const LAN_HOST = "172.25.35.184:4174";
+  const pairUrl = () => {
+    const local = ["localhost", "127.0.0.1", "[::1]"].includes(location.hostname);
+    return `${location.protocol}//${local ? LAN_HOST : location.host}${location.pathname.replace(/[^/]*$/, "")}start.html`;
+  };
+  const qrSvg = (text) => {
+    const q = qrcode(0, "M"); q.addData(text); q.make();
+    const n = q.getModuleCount(); let d = "";
+    for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (q.isDark(r, c)) d += `M${c} ${r}h1v1h-1z`;
+    return `<svg viewBox="-1 -1 ${n + 2} ${n + 2}" shape-rendering="crispEdges"><path d="${d}" fill="#090A0C"/></svg>`;
+  };
+  const pairBtn = document.querySelector("[data-pair]");
+  const markPair = () => { pairBtn.classList.toggle("is-on", !!P.state.phone); pairBtn.querySelector("[data-pair-label]").textContent = P.t(P.state.phone ? "pair_on" : "pair_btn"); };
+  const doneRow = () => `<svg><use href="#i-check"/></svg>${P.t("pair_done")}`;
+  pairBtn.addEventListener("click", () => {
+    const on = !!P.state.phone;
+    const sh = P.sheet({ wide: true, title: P.t("pair_title"), body: `
+      <div class="pairing">${qrSvg(pairUrl())}<div>
+        <ol><li>${P.t("pair_s1")}</li><li>${P.t("pair_s2")}</li></ol>
+        <p class="pairing__hint">${P.t("pair_hint")}</p>
+        <p class="pairing__url num">${pairUrl().replace(/^https?:\/\//, "")}</p>
+        <p class="pairing__state${on ? " is-done" : ""}" data-ps>${on ? doneRow() : `<span class="spinner"></span>${P.t("qr_waiting")}`}</p>
+        ${on ? `<button class="btn btn--ghost" type="button" data-unpair style="margin-top:20px">${P.t("pair_off")}</button>` : ""}
+      </div></div>` });
+    if (on) sh.body.querySelector("[data-unpair]").addEventListener("click", () => { P.state.phone = false; P.save(); markPair(); sh.close(); });
+    else setTimeout(() => {
+      const q = sh.body.querySelector("[data-ps]"); if (!q) return;
+      P.state.phone = true; P.save(); markPair(); q.classList.add("is-done"); q.innerHTML = doneRow(); P.toast(P.t("t_paired"));
+    }, 2600);
+  });
+  addEventListener("proto:lang", markPair);
+
+  document.querySelector("[data-settings]").addEventListener("click", P.openSettings);
+  addEventListener("proto:lang", markLang);
+
+  P.init();
+  markPair();
+  select(P.state.mode in IMG ? P.state.mode : "ENJOY");
+})();
+</script>
+</body>
+</html>

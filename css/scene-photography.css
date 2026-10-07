@@ -1,0 +1,135 @@
+/* Photographic journey beats — amber lives in light, never in display typography. */
+
+.hero-frame {
+  background-image:
+    linear-gradient(90deg, rgba(0, 0, 0, .88) 0%, rgba(0, 0, 0, .58) 42%, rgba(0, 0, 0, .14) 78%),
+    linear-gradient(180deg, rgba(0, 0, 0, .08), rgba(0, 0, 0, .54)),
+    url("../assets/scenes/board-amber.webp");
+  background-position: center;
+  background-size: cover;
+}
+
+.enjoy .product-frame::before {
+  background-image:
+    linear-gradient(90deg, rgba(0, 0, 0, .92) 0%, rgba(0, 0, 0, .48) 46%, rgba(0, 0, 0, .14) 82%),
+    linear-gradient(180deg, rgba(0, 0, 0, .1), rgba(0, 0, 0, .62)),
+    url("../assets/scenes/enjoy-amber.webp");
+  background-position: center;
+  background-size: cover;
+  filter: none;
+}
+
+.mode-frame::before {
+  background: radial-gradient(circle at 50% 58%, rgba(255, 255, 255, .035), transparent 34%), #000;
+  filter: none;
+}
+
+.rest-frame::before {
+  content: "";
+  position: absolute;
+  z-index: -3;
+  inset: 0;
+  background-image:
+    linear-gradient(90deg, rgba(0, 0, 0, .82) 0%, rgba(0, 0, 0, .48) 48%, rgba(0, 0, 0, .14) 82%),
+    linear-gradient(180deg, rgba(0, 0, 0, .12), rgba(0, 0, 0, .64)),
+    url("../assets/scenes/rest-amber.webp");
+  background-position: center;
+  background-size: cover;
+}
+
+#starfield { opacity: .42; }
+.aurora { opacity: .14; }
+
+.prepare {
+  background-image:
+    linear-gradient(90deg, rgba(0, 0, 0, .94) 0%, rgba(0, 0, 0, .66) 48%, rgba(0, 0, 0, .12) 100%),
+    linear-gradient(180deg, rgba(0, 0, 0, .08), rgba(0, 0, 0, .44)),
+    url("../assets/scenes/prepare-amber.webp");
+  background-position: center;
+  background-size: cover;
+}
+
+.landing {
+  background: #020914;
+}
+
+.landing-description {
+  max-width: 34rem;
+  margin: 26px 0 0;
+  color: rgba(255, 255, 255, .72);
+  font-size: clamp(.92rem, 1.35vw, 1.15rem);
+  line-height: 1.7;
+}
+
+.landing-frame {
+  --landing-fade: 0;
+  background-image:
+    linear-gradient(180deg, rgba(1, 7, 16, .68) 0%, rgba(1, 7, 16, .18) 54%, rgba(1, 7, 16, .54) 100%),
+    linear-gradient(90deg, rgba(1, 7, 16, .48), rgba(1, 7, 16, .12) 57%, transparent 76%),
+    url("../assets/scenes/landing-airport.webp");
+  background-position: center center;
+  background-size: cover;
+}
+
+.landing-frame::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  pointer-events: none;
+  background: #ffffff;
+  opacity: var(--landing-fade);
+}
+
+@media (max-width: 760px) {
+  .hero-frame {
+    background-image:
+      linear-gradient(180deg, rgba(0, 0, 0, .7) 0%, rgba(0, 0, 0, .18) 48%, rgba(0, 0, 0, .76) 100%),
+      url("../assets/scenes/board-amber-m.webp");
+    background-position: 52% center;
+  }
+
+  .enjoy .product-frame::before {
+    background-image:
+      linear-gradient(180deg, rgba(0, 0, 0, .76) 0%, rgba(0, 0, 0, .28) 46%, rgba(0, 0, 0, .8) 100%),
+      url("../assets/scenes/enjoy-amber-m.webp");
+    background-position: 58% center;
+  }
+
+  .rest-frame::before {
+    background-image:
+      linear-gradient(180deg, rgba(0, 0, 0, .76) 0%, rgba(0, 0, 0, .3) 44%, rgba(0, 0, 0, .82) 100%),
+      url("../assets/scenes/rest-amber-m.webp");
+    background-position: 62% center;
+  }
+
+  .prepare {
+    background-image:
+      linear-gradient(180deg, rgba(0, 0, 0, .74) 0%, rgba(0, 0, 0, .22) 45%, rgba(0, 0, 0, .76) 100%),
+      url("../assets/scenes/prepare-amber-m.webp");
+    background-position: 60% center;
+  }
+
+  .landing-frame {
+    background-image:
+      linear-gradient(180deg, rgba(1, 7, 16, .7) 0%, rgba(1, 7, 16, .18) 48%, rgba(1, 7, 16, .62) 100%),
+      url("../assets/scenes/landing-airport-m.webp");
+    background-position: center;
+  }
+
+  .landing-description { max-width: min(19rem, calc(100vw - 48px)); margin-top: 18px; font-size: .9rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-frame,
+  .enjoy .product-frame::before,
+  .rest-frame::before,
+  .prepare,
+  .landing { background-attachment: scroll; }
+}
+
+/* 착륙 문구 — 개요("무엇을 볼지가 아니라")와 같은 배치·위계: 화면 가운데, 제목 64/75 600, 설명 21/32 600 회색 */
+.landing-copy { position: relative; z-index: 3; top: auto; left: auto; right: auto; width: min(1100px, calc(100vw - 48px)); text-align: center; } /* 가운데는 부모 그리드(place-items: center)가 맞춘다 — transform은 스크롤 연출(GSAP)이 쓴다 */
+.landing-copy > strong { margin: 0 auto 26.88px; }
+.landing-copy .landing-description { max-width: 640px; margin: 0 auto; color: #909090; font-size: 21px; line-height: 32px; font-weight: 600; letter-spacing: .011em; }
+@media (max-width: 734px) { .landing-copy .landing-description { font-size: 17px; line-height: 1.5; } }

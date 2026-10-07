@@ -1,0 +1,36 @@
+/* 버튼 — 테두리를 쓰지 않는다. 주요 버튼은 앰버로 채운 알약, 나머지는 옅은 면으로만 구분 (Apple 방식) */
+
+/* 주요 버튼 · 내비 예약 */
+.button--primary, .nav-cta,
+body.grounded .nav-cta, .booking .button--primary, .cabins .button--primary,
+.flight-search button, .phone-screen > button {
+  border: 0;
+  color: #000000;
+  background: var(--amber);
+  transition: transform .25s var(--ease), background .25s;
+}
+.button--primary:hover, .nav-cta:hover, .flight-search button:hover, .phone-screen > button:hover { background: #bdbdbd; }
+.flight-search button { border-left: 0; }
+
+/* 텍스트 버튼의 + — 테두리 대신 옅은 원 */
+.text-button::after { border: 0; background: rgba(255, 255, 255, .14); }
+.booking .text-button::after, .cabins .text-button::after { background: rgba(0, 0, 0, .08); }
+
+/* 탭·선택 — 바깥 테두리 없이 면으로 */
+.mode-tabs { border: 0; background: rgba(255, 255, 255, .08); }
+.cabin-tabs { border: 0; background: rgba(0, 0, 0, .06); }
+.sleep-steps button, .sleep-steps button.is-active { border-color: transparent; }
+.sleep-steps button.is-active { background: rgba(255, 255, 255, .08); }
+.checklist button, .checklist button:hover { border-color: transparent; }
+.checklist button:hover { background: rgba(255, 255, 255, .06); }
+
+/* 목업 속 보조 버튼 */
+.send-phone { border: 0; background: rgba(255, 255, 255, .1); }
+
+/* 혜택 벤토 — 알약과 태그도 면으로 */
+.bento-pill { border: 0; background: rgba(0, 0, 0, .06); }
+.bento-check em, .benefits .bento-check em { border: 0; color: #656565; background: rgba(101, 101, 101, .1); }
+.bento-check em.is-opt, .benefits .bento-check em.is-opt { color: #6f6f6f; background: rgba(0, 0, 0, .06); }
+
+/* 시퀀스 모드에서만 보이는 Skip intro */
+.intro-skip { border: 0; background: rgba(255, 255, 255, .14); }

@@ -1,0 +1,165 @@
+/* 객실 등급 — 패널 안 토글 · 생성한 좌석 등받이 쉘 · 좌측 설명 말풍선
+   말풍선 치수는 Apple '보다 자세히 들여다보기' 실측을 유지한다. */
+.ife-stage {
+  position: relative;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 28px clamp(20px, 4vw, 56px) 56px;
+  border-radius: 28px;
+  background: var(--light-card, #fff);
+}
+
+/* 토글은 패널 상단 중앙의 내부 패딩 안에 둔다. */
+.ife .cabin-tabs {
+  position: relative;
+  z-index: 4;
+  width: max-content;
+  max-width: 100%;
+  margin: 0 auto clamp(42px, 5vw, 64px);
+  border-color: rgba(20, 24, 30, .08);
+  background: rgba(20, 24, 30, .075);
+}
+.ife .cabin-tabs button.is-active {
+  box-shadow: inset 0 0 0 1px var(--amber);
+}
+.ife .cabin-tabs button:focus-visible { outline: 2px solid #11151b; outline-offset: 2px; }
+
+/* 세 자산은 같은 3:2 캔버스. 그림 영역을 고정하고 목업만 중앙 기준으로 커진다. */
+.ife-view {
+  position: relative;
+  display: grid;
+  min-width: 0;
+  place-items: center;
+  overflow: visible;
+}
+.ife-view::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  right: 12%;
+  bottom: 5%;
+  left: 12%;
+  height: 7%;
+  border-radius: 50%;
+  pointer-events: none;
+  background: rgba(32, 38, 48, .13);
+  filter: blur(18px);
+}
+.ife-mock {
+  --mock-scale: .739;
+  position: relative;
+  z-index: 1;
+  width: calc(var(--mock-max, .8) * 100%);
+  aspect-ratio: var(--frame-ratio, 3 / 2);
+  margin: 0;
+  transform: scale(var(--mock-scale));
+  transform-origin: 50% 50%;
+  transition: transform var(--mock-ms, 600ms) var(--mock-ease, cubic-bezier(.34, 1.32, .64, 1));
+  will-change: transform;
+}
+.ife-mock__layer,
+.ife-mock__picture,
+.ife-mock__frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.ife-mock__layer {
+  opacity: 0;
+  transform: translate3d(0, 10px, 0) scale(.995);
+  transition: opacity var(--mock-fade-ms, 420ms) ease-in-out, transform var(--mock-ms, 600ms) var(--mock-ease, cubic-bezier(.34, 1.32, .64, 1));
+  will-change: opacity, transform;
+}
+.ife-mock__layer.is-current { z-index: 2; opacity: 1; transform: none; }
+.ife-mock__picture { z-index: 1; }
+.ife-mock__frame { object-fit: contain; user-select: none; pointer-events: none; }
+
+/* 생성 이미지의 측정 좌표와 같은 위치에 올리는 교체 가능한 빈 화면 레이어. */
+.ife-mock__screen {
+  position: absolute;
+  z-index: 2;
+  left: var(--scr-l);
+  top: var(--scr-t);
+  width: var(--scr-w);
+  height: var(--scr-h);
+  border-radius: var(--scr-radius, 1.4%);
+  pointer-events: none;
+  overflow: hidden;
+  background: #050607 url("../assets/overview/start-screen.png") center / cover no-repeat;
+}
+
+/* 말풍선 — 가장 긴 내용 높이로 고정한 영역 안에서 위쪽 정렬 */
+.ife-bubble-wrap { position: relative; display: flex; justify-content: center; margin-top: 40px; }
+.ife-bubble {
+  position: relative;
+  z-index: 3;
+  width: min(100%, 440px);
+  height: 56px;
+  overflow: hidden;
+  border-radius: 28px;
+  background: rgba(255, 255, 255, .72);
+  box-shadow: inset 0 0 .5px rgba(0, 0, 0, .11);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  transition: height 600ms cubic-bezier(.34, 1.32, .64, 1);
+}
+.ife-bubble.is-closing { transition: height 300ms ease-in-out; }
+.ife-bubble__inner { padding: 28px; opacity: 0; transform: translateY(6px); transition: opacity .3s ease-in-out, transform .4s ease-in-out; }
+.ife-bubble__inner.is-in { opacity: 1; transform: none; transition: opacity .6s ease-in-out .25s, transform .4s ease-in-out .25s; }
+.ife-bubble__inner.is-probe { position: absolute; inset: 0 0 auto; visibility: hidden; }
+.ife-bubble__text { margin: 0; font: var(--type-body); color: var(--text-main); }
+.ife-bubble__text strong { font-weight: 600; }
+.ife-bubble__specs { margin: 18px 0 0; }
+.ife-bubble__specs div { display: flex; justify-content: space-between; gap: 16px; padding: 10px 0; border-top: 1px solid var(--line); }
+.ife-bubble__specs dt { font: var(--type-small); color: var(--text-sub); }
+.ife-bubble__specs dd { margin: 0; font: var(--type-small); color: var(--text-main); }
+
+@media (min-width: 735px) {
+  .ife-stage {
+    display: grid;
+    grid-template-columns: minmax(300px, 400px) minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
+    align-items: center;
+    gap: 0 clamp(32px, 4vw, 72px);
+    max-width: none;
+    min-height: min(82vh, 800px);
+    margin-inline: calc(24px - max(5vw, 24px));
+    padding: clamp(28px, 4vh, 44px) clamp(32px, 5vw, 88px) clamp(44px, 6vh, 72px);
+  }
+  .ife .cabin-tabs { grid-column: 1 / -1; grid-row: 1; }
+  .ife-view { grid-column: 2; grid-row: 2; }
+  .ife-bubble-wrap { grid-column: 1; grid-row: 2; align-items: center; justify-content: flex-start; margin-top: 0; }
+  .ife-bubble { width: 100%; }
+  :root .ife-stage { --mock-max: 1; }
+}
+
+@media (min-width: 735px) and (max-width: 1068px) {
+  .ife-stage {
+    grid-template-columns: minmax(260px, 320px) minmax(0, 1fr);
+    gap: 0 32px;
+    min-height: 0;
+    padding: 32px;
+  }
+  .ife .cabin-tabs { margin-bottom: 42px; }
+}
+
+@media (max-width: 734px) {
+  .ife-stage { padding: 22px 16px 24px; border-radius: 24px; }
+  .ife .cabin-tabs { gap: 2px; margin-bottom: 28px; }
+  .ife .cabin-tabs button { min-width: 0; padding: 10px 14px; }
+  .ife-mock { width: 100%; }
+  :root .ife-stage { --mock-max: 1; }
+  .ife-bubble-wrap { margin-top: 20px; }
+  .ife-bubble { width: 100%; }
+  .ife-bubble__inner { padding: 22px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ife-mock, .ife-bubble, .ife-bubble.is-closing { transition: none; }
+  .ife-mock__layer { transform: none; transition: opacity .16s linear; transition-duration: .16s !important; }
+  .ife-bubble__inner, .ife-bubble__inner.is-in { transform: none; transition: opacity .16s linear; transition-duration: .16s !important; }
+}
+
+/* 이전 사진 카드·색상 칩 스타일은 쓰지 않는다. */
+.cabin-viewer, .cabin-color { display: none; }

@@ -1,0 +1,865 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MOMEN IFE — Home</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="proto.css?v=1006215408">
+<style>
+/* 모드별 화면 — 상단 바만 공통, 아래는 모드마다 레이아웃이 다르다. 모드 전환은 메뉴 2뎁스 */
+
+/* 배경 */
+.backdrop { position: absolute; inset: 0; z-index: -1; }
+.backdrop img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .9s var(--ease); }
+.backdrop img.is-on { opacity: var(--bg-op, .35); }
+.stage[data-mode="REST"] { --bg-op: .38; }
+.stage[data-mode="REST"][data-rest-light="dark"] { --bg-op: .16; }
+.stage[data-mode="REST"][data-rest-light="bright"] { --bg-op: .55; }
+.stage[data-mode="WORK"] { --bg-op: .16; }
+.stage[data-mode="ENJOY"], .stage[data-mode="PREPARE"], .stage[data-mode="TRAVEL"] { --bg-op: 0; }
+
+/* 상단 바 */
+.topbar { position: absolute; left: 64px; right: 64px; top: 40px; height: 56px; display: flex; align-items: center; justify-content: space-between; z-index: 5; }
+.topbar__group { display: flex; align-items: center; gap: 12px; }
+.pill__mode { padding-left: 12px; margin-left: 2px; border-left: 1px solid var(--hairline); color: var(--text-2); font-weight: 500; }
+.wordmark { position: absolute; left: 50%; transform: translateX(-50%); font: 700 20px/1 var(--font); letter-spacing: .32em; padding-left: .32em; }
+.status { height: 48px; padding: 0 8px; display: flex; align-items: center; gap: 2px; border-radius: 999px; background: var(--glass); box-shadow: inset 0 0 0 var(--hair, 1px) var(--hairline); -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px); }
+.status button, .status > span { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; color: var(--text-2); position: relative; transition: background .2s var(--ease), color .2s var(--ease); }
+.status button:hover { background: var(--glass-strong); color: var(--text-1); }
+.status svg { width: 19px; height: 19px; }
+.status .is-on { color: var(--a-300); }
+.status button.is-on { background: rgba(225, 169, 116, .14); }
+.status__sep { display: block; width: 1px; height: 20px; background: var(--hairline); margin: 0 6px; }
+.badge { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; border-radius: 50%; background: var(--a-400); box-shadow: 0 0 0 2px var(--c-900); }
+
+/* 화면 영역 */
+.view { position: absolute; left: 64px; right: 64px; top: 128px; bottom: 40px; }
+.view.is-swap { animation: viewIn .55s var(--ease); }
+@keyframes viewIn { from { opacity: 0; transform: translateY(14px); } }
+
+/* 공통 조각 */
+.eyebrow { font: var(--t-label); letter-spacing: .09em; text-transform: uppercase; color: var(--text-3); display: flex; align-items: center; gap: 10px; }
+.eyebrow i { width: 4px; height: 4px; border-radius: 50%; background: var(--c-600); }
+.eyebrow b { color: var(--a-200); font-weight: 600; }
+.h-hero { font: var(--t-hero); letter-spacing: -0.035em; }
+.h-sub { font: 400 19px/1.6 var(--font); letter-spacing: -0.012em; color: var(--text-2); }
+.card { border-radius: var(--r-lg); background: rgba(26, 28, 30, .74); box-shadow: inset 0 0 0 var(--hair, 1px) var(--hairline); -webkit-backdrop-filter: blur(30px); backdrop-filter: blur(30px); padding: 28px; }
+.card__head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
+.card__title { font: 600 20px/1.3 var(--font); letter-spacing: -0.018em; }
+.card__more { font: var(--t-caption); color: var(--text-3); text-align: right; }
+.row { display: grid; grid-template-columns: 64px 1fr auto; gap: 16px; align-items: center; padding: 10px; margin: 0 -10px; border-radius: var(--r-sm); text-align: left; transition: background .2s var(--ease); }
+button.row:hover { background: var(--glass); }
+.thumb { width: 64px; height: 64px; border-radius: 14px; display: grid; place-items: center; background: var(--c-800); box-shadow: inset 0 0 0 var(--hair, 1px) var(--hairline); overflow: hidden; }
+.thumb img { width: 100%; height: 100%; object-fit: cover; }
+.row__name { display: block; font: 600 16px/1.35 var(--font); letter-spacing: -0.014em; }
+.row__sub { display: flex; gap: 8px; align-items: center; margin-top: 3px; font: var(--t-caption); color: var(--text-3); }
+.mini { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: var(--glass-strong); color: var(--text-1); flex: none; }
+.mini svg { width: 14px; height: 14px; }
+.live-dot { display: inline-flex; align-items: center; gap: 6px; color: var(--a-200); font-weight: 600; letter-spacing: .04em; }
+.live-dot::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--a-400); box-shadow: 0 0 8px var(--a-400); animation: pulse 2s infinite; }
+@keyframes pulse { 50% { opacity: .35; } }
+.bar { display: block; height: 3px; border-radius: 3px; background: rgba(244, 245, 246, .16); overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--c-50); border-radius: inherit; }
+.notice__icon { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: rgba(225, 169, 116, .14); color: var(--a-300); flex: none; }
+.notice__icon svg { width: 20px; height: 20px; }
+.notice__title { font: 600 17px/1.4 var(--font); letter-spacing: -0.014em; }
+.notice__body { margin-top: 4px; font: var(--t-small); letter-spacing: -0.008em; color: var(--text-2); }
+.actions { display: flex; gap: 8px; align-items: center; }
+.chip { font: var(--t-label); letter-spacing: .06em; color: var(--a-200); padding: 6px 10px; border-radius: 999px; background: rgba(225, 169, 116, .12); white-space: nowrap; }
+.switch-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 0; border-top: 1px solid var(--hairline); }
+.switch-row:first-of-type { border-top: 0; padding-top: 0; }
+.switch-row__label { font: 500 16px/1.4 var(--font); letter-spacing: -0.01em; }
+.switch-row__desc { display: block; margin-top: 2px; font: var(--t-caption); color: var(--text-3); }
+.save-btn { height: 34px; padding: 0 14px; border-radius: 999px; font: 600 13px/1 var(--font); background: var(--glass-strong); white-space: nowrap; }
+.save-btn[aria-pressed="true"] { box-shadow: var(--sel); background: transparent; color: var(--text-1); }
+.tabs { display: flex; gap: 8px; }
+.tabs button { height: 44px; padding: 0 20px; border-radius: 999px; font: 600 16px/1 var(--font); letter-spacing: -0.012em; color: var(--text-3); transition: background .2s var(--ease), color .2s var(--ease); }
+.tabs button:hover { color: var(--text-1); }
+.tabs button[aria-selected="true"] { box-shadow: var(--sel); background: transparent; color: var(--text-1); }
+.facts { display: flex; gap: 40px; }
+.fact dt { font: var(--t-label); letter-spacing: .09em; color: var(--text-3); }
+.fact dd { margin-top: 8px; font: 600 26px/1.15 var(--font); letter-spacing: -0.025em; font-variant-numeric: tabular-nums; }
+
+/* ── 공통 그리드: 1792×912 영역을 12열(131px) · 간격 20px로 나눈다 ── */
+.view { display: grid; grid-template-columns: repeat(12, 1fr); gap: 20px; }
+.view > * { min-width: 0; min-height: 0; }
+.fill { display: flex; flex-direction: column; }
+.fill > .grow { flex: 1; min-height: 0; }
+.c1-12 { grid-column: 1 / 13; } .c1-9 { grid-column: 1 / 10; } .c1-8 { grid-column: 1 / 9; } .c1-6 { grid-column: 1 / 7; } .c1-4 { grid-column: 1 / 5; }
+.c5-8 { grid-column: 5 / 9; } .c7-12 { grid-column: 7 / 13; } .c9-12 { grid-column: 9 / 13; } .c10-12 { grid-column: 10 / 13; }
+.c1-3 { grid-column: 1 / 4; } .c4-6 { grid-column: 4 / 7; } .c7-9 { grid-column: 7 / 10; } .c10-12b { grid-column: 10 / 13; }
+
+/* ── 감상: 대표 / 탭 / 포스터 4 ── */
+.view[data-mode="ENJOY"] { grid-template-rows: 1fr 44px 280px; }
+.enjoy-feature { position: relative; grid-row: 1; border-radius: 32px; overflow: hidden; background: var(--c-900); }
+.enjoy-feature > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.enjoy-feature::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(9, 10, 12, .92) 0%, rgba(9, 10, 12, .55) 40%, transparent 70%), linear-gradient(0deg, rgba(9, 10, 12, .85) 0%, transparent 45%); }
+.enjoy-feature__body { position: absolute; left: 56px; bottom: 52px; z-index: 1; max-width: 900px; }
+.enjoy-feature__title { margin-top: 16px; font: 700 88px/1.02 var(--font); letter-spacing: -0.045em; }
+.enjoy-feature__meta { margin-top: 18px; display: flex; gap: 14px; align-items: center; font: var(--t-body); color: var(--text-2); }
+.enjoy-feature__meta b { color: var(--text-1); font-weight: 600; font-variant-numeric: tabular-nums; }
+.enjoy-feature .actions { margin-top: 30px; }
+/* 기내식 카드는 그리드 오른쪽 4칸 폭에 맞춘다 */
+.meal-float { position: absolute; right: 32px; bottom: 32px; z-index: 1; width: calc((100% - 220px) / 12 * 4 + 60px - 32px); display: grid; grid-template-columns: 44px 1fr; gap: 16px; padding: 24px; }
+.meal-float .actions { margin-top: 14px; }
+.shelf-head { grid-row: 2; display: flex; align-items: center; justify-content: space-between; }
+.poster { grid-row: 3; position: relative; border-radius: 24px; overflow: hidden; text-align: left; background: var(--c-850); box-shadow: inset 0 0 0 var(--hair, 1px) var(--hairline); display: flex; flex-direction: column; justify-content: flex-end; padding: 24px; }
+.poster img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .72; transition: transform .6s var(--ease), opacity .3s var(--ease); }
+.poster::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 35%, rgba(9, 10, 12, .92) 100%); }
+.poster > *:not(img) { position: relative; z-index: 1; }
+.poster:hover img { transform: scale(1.04); opacity: .85; }
+.poster__kind { font: var(--t-label); letter-spacing: .09em; color: var(--text-2); }
+.poster__title { margin-top: 8px; font: 600 24px/1.25 var(--font); letter-spacing: -0.022em; }
+.poster .bar { margin-top: 14px; }
+
+/* ── 휴식: 왼쪽 8칸 / 오른쪽 4칸, 4행 ── */
+.view[data-mode="REST"] { grid-template-rows: repeat(4, 1fr); }
+.rest-head { grid-row: 1; align-self: center; padding-left: 8px; }
+.rest-head .h-sub { margin-top: 14px; }
+.rest-head .h-hero { margin-top: 12px; font-size: 60px; }
+.sleep-win { grid-row: 2; }
+.sleep-bar__track { position: relative; height: 64px; border-radius: 18px; background: rgba(244, 245, 246, .06); box-shadow: inset 0 0 0 var(--hair, 1px) var(--hairline); overflow: hidden; }
+.sleep-bar__win { position: absolute; top: 0; bottom: 0; border-radius: 18px; background: transparent; box-shadow: var(--sel); display: flex; align-items: center; justify-content: center; gap: 8px; font: 600 17px/1 var(--font); color: var(--text-1); letter-spacing: -0.01em; transition: left .4s var(--ease), width .4s var(--ease); }
+.sleep-bar__win svg { width: 18px; height: 18px; }
+.sleep-bar__now { position: absolute; top: 10px; bottom: 10px; width: 2px; border-radius: 2px; background: var(--c-50); }
+.sleep-bar__ticks { margin-top: 12px; display: flex; justify-content: space-between; font: var(--t-caption); color: var(--text-3); font-variant-numeric: tabular-nums; }
+.time-card { grid-row: 3; display: flex; align-items: center; justify-content: space-between; }
+.time-card__label { font: var(--t-small); color: var(--text-3); }
+.time-card__value { margin-top: 8px; font: 600 56px/1 var(--font); letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
+.stepper { display: flex; gap: 8px; }
+.stepper button { width: 52px; height: 52px; border-radius: 50%; background: var(--glass-strong); display: grid; place-items: center; }
+.stepper button svg { width: 18px; height: 18px; }
+.sleep-cta { grid-row: 4; display: flex; flex-direction: column; justify-content: space-between; text-align: left; transition: transform .2s var(--ease); }
+.sleep-cta:active { transform: scale(.98); }
+.sleep-cta svg { width: 32px; height: 32px; }
+.sleep-cta__title { font: 600 28px/1.2 var(--font); letter-spacing: -0.025em; }
+.sleep-cta__sub { margin-top: 6px; font: var(--t-small); color: var(--text-3); }
+.media-card { grid-row: 4; display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: end; position: relative; overflow: hidden; text-align: left; }
+.media-card > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .45; }
+.media-card::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(9, 10, 12, .9), rgba(9, 10, 12, .3)); }
+.media-card > *:not(img) { position: relative; z-index: 1; }
+.media-card .mini { width: 52px; height: 52px; }
+.rest-r1 { grid-row: 1; } .rest-r2 { grid-row: 2; } .rest-r3 { grid-row: 3; } .rest-r4 { grid-row: 4; }
+.dial-group { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.dial { padding: 14px 8px 12px; border-radius: 16px; text-align: center; box-shadow: inset 0 0 0 var(--hair, 1px) var(--hairline); font: 600 14px/1.3 var(--font); color: var(--text-2); transition: box-shadow .2s var(--ease), background .2s var(--ease), color .2s var(--ease); }
+.dial svg { width: 26px; height: 26px; margin: 0 auto 8px; }
+.dial[aria-pressed="true"] { box-shadow: var(--sel); background: transparent; color: var(--text-1); }
+.dial[aria-pressed="true"] svg { color: var(--text-1); }
+.view .card { padding: 26px 28px; }
+.view .card__head { margin-bottom: 14px; }
+
+/* ── 업무: 타이머 8칸 × 4행, 오른쪽 4칸 카드 4개 ── */
+.view[data-mode="WORK"] { grid-template-rows: repeat(4, 1fr); }
+.work-timer { grid-row: 1 / 5; padding: 56px !important; display: flex; flex-direction: column; }
+.work-timer .h-sub { margin-top: 12px; }
+.timer { margin-top: auto; font: 300 260px/.9 var(--font); letter-spacing: -0.06em; font-variant-numeric: tabular-nums; }
+.timer-line { margin-top: 36px; height: 6px; border-radius: 6px; background: rgba(244, 245, 246, .1); overflow: hidden; }
+.timer-line i { display: block; height: 100%; width: 0; background: var(--a-400); border-radius: inherit; transition: width 1s linear; }
+.timer-ctrls { margin-top: 32px; display: flex; align-items: center; justify-content: space-between; }
+.timer-ctrls .btn--lg { height: 60px; padding: 0 32px; font-size: 17px; }
+.wifi { display: grid; grid-template-columns: 52px 1fr auto; gap: 16px; align-items: center; }
+.wifi__icon { width: 52px; height: 52px; border-radius: 16px; display: grid; place-items: center; background: var(--c-800); }
+.wifi__icon svg { width: 24px; height: 24px; }
+.wifi__stat { text-align: right; font: 600 22px/1 var(--font); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.wifi__stat small { display: block; margin-top: 6px; font: var(--t-caption); color: var(--text-3); }
+.held__item { display: grid; grid-template-columns: 36px 1fr auto; gap: 12px; align-items: center; padding: 10px 0; border-top: 1px solid var(--hairline); transition: filter .3s var(--ease), opacity .3s var(--ease); }
+.held__item:first-child { border-top: 0; padding-top: 0; }
+.held__item .notice__icon { width: 36px; height: 36px; }
+.held__item .notice__icon svg { width: 17px; height: 17px; }
+.held.is-hidden .held__item { filter: blur(6px); opacity: .5; }
+.count { display: inline-grid; place-items: center; min-width: 26px; height: 26px; padding: 0 8px; margin-left: 8px; border-radius: 999px; font: 600 14px/1 var(--font); color: var(--c-950); background: var(--c-50); vertical-align: 2px; }
+.view[data-mode="WORK"] .switch-row { padding: 9px 0; }
+
+/* ── 준비: 띠 / 체크리스트 6칸 · 교통편 6칸 · 경로 6칸 ── */
+.view[data-mode="PREPARE"] { grid-template-rows: 260px 1fr 1fr; }
+.prep-band { grid-row: 1; position: relative; border-radius: 32px; overflow: hidden; }
+.prep-band > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .8; }
+.prep-band::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(9, 10, 12, .9) 0%, rgba(9, 10, 12, .5) 50%, rgba(9, 10, 12, .2) 100%); }
+.prep-band__body { position: absolute; left: 56px; right: 56px; top: 44px; bottom: 40px; z-index: 1; display: flex; align-items: flex-end; justify-content: space-between; }
+.prep-band .h-hero { font-size: 60px; margin-top: 12px; }
+.prep-steps { grid-row: 2 / 4; }
+.vsteps { display: flex; flex-direction: column; justify-content: space-between; }
+.vstep { position: relative; display: grid; grid-template-columns: 56px 1fr auto; gap: 22px; align-items: center; width: 100%; flex: 1; text-align: left; }
+.vstep + .vstep { border-top: 1px solid var(--hairline); }
+.vstep__num { width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; font: 600 19px/1 var(--font); box-shadow: inset 0 0 0 var(--hair, 1px) rgba(244, 245, 246, .22); transition: background .2s var(--ease); }
+.vstep__num svg { width: 22px; height: 22px; }
+.vstep.is-done .vstep__num { background: var(--c-50); color: var(--c-950); box-shadow: none; }
+.vstep__name { display: block; font: 600 24px/1.3 var(--font); letter-spacing: -0.022em; }
+.vstep.is-done .vstep__name { color: var(--text-3); text-decoration: line-through; text-decoration-color: rgba(244, 245, 246, .35); }
+.vstep__desc { display: block; margin-top: 6px; font: var(--t-body); color: var(--text-2); }
+.vstep__meta { font: 600 22px/1 var(--font); letter-spacing: -0.02em; color: var(--text-2); font-variant-numeric: tabular-nums; }
+.prep-r2 { grid-row: 2; } .prep-r3 { grid-row: 3; }
+.choices { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.choice { padding: 20px 22px; border-radius: 20px; text-align: left; box-shadow: inset 0 0 0 var(--hair, 1px) var(--hairline); transition: box-shadow .2s var(--ease), background .2s var(--ease); display: flex; flex-direction: column; }
+.choice[aria-checked="true"] { box-shadow: var(--sel); background: transparent; }
+.choice__top { display: flex; justify-content: space-between; align-items: center; min-height: 28px; }
+.choice__top svg { width: 26px; height: 26px; color: var(--text-2); }
+.choice__name { display: block; margin-top: auto; font: 600 22px/1.3 var(--font); letter-spacing: -0.02em; }
+.choice__sub { display: block; margin-top: 4px; font: var(--t-small); color: var(--text-3); }
+.route-card { display: grid; grid-template-columns: 1fr 200px; gap: 28px; align-items: stretch; }
+.route-card__info { display: flex; flex-direction: column; }
+.route-line { display: flex; align-items: center; gap: 12px; font: 600 19px/1.4 var(--font); letter-spacing: -0.016em; }
+.route-line svg { width: 22px; height: 22px; color: var(--a-300); flex: none; }
+.route-card .btn--lg { margin-top: auto; align-self: flex-start; }
+.route-card svg.qr-mini { width: 200px; height: 200px; border-radius: 18px; background: var(--c-50); padding: 14px; }
+
+/* ── 여행: 배너 / 머리 / 할 일 3장(3칸씩) · 오른쪽 3칸 ── */
+.view[data-mode="TRAVEL"] { grid-template-rows: 300px 44px 1fr; }
+.travel-band { grid-row: 1; position: relative; border-radius: 32px; overflow: hidden; }
+.travel-band > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 60%; }
+.travel-band::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(9, 10, 12, .85) 0%, rgba(9, 10, 12, .3) 55%, transparent 100%), linear-gradient(0deg, rgba(9, 10, 12, .6) 0%, transparent 50%); }
+.travel-band__body { position: absolute; left: 56px; bottom: 44px; z-index: 1; }
+.travel-band__title { margin-top: 10px; font: var(--t-display); letter-spacing: -0.045em; }
+.travel-band__meta { margin-top: 12px; font: var(--t-body); color: var(--text-2); }
+.travel-head { grid-row: 2; display: flex; align-items: center; justify-content: space-between; }
+.place { grid-row: 3; display: flex; flex-direction: column; border-radius: 24px; overflow: hidden; background: rgba(26, 28, 30, .74); box-shadow: inset 0 0 0 var(--hair, 1px) var(--hairline); }
+.place__img { flex: 1; min-height: 0; overflow: hidden; }
+.place__img img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s var(--ease); }
+.place:hover .place__img img { transform: scale(1.04); }
+.place__body { padding: 20px 22px 22px; display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: end; }
+.place__name { font: 600 20px/1.3 var(--font); letter-spacing: -0.018em; }
+.place__sub { margin-top: 4px; font: var(--t-caption); color: var(--text-3); }
+.travel-side { grid-row: 2 / 4; display: flex; flex-direction: column; gap: 20px; }
+.travel-side .card:first-child { flex: 1; }
+.plan-list { display: flex; flex-direction: column; gap: 12px; }
+.plan-item { display: flex; align-items: center; gap: 12px; font: 500 16px/1.4 var(--font); }
+.plan-item svg { width: 18px; height: 18px; color: var(--a-300); flex: none; }
+.empty { font: var(--t-small); color: var(--text-3); }
+.travel-side .actions { flex-wrap: wrap; }
+
+/* 전체 보기 */
+.browse-btn { gap: 8px; }
+.browse-btn svg { width: 14px; height: 14px; }
+.browse-btn .num { color: var(--text-3); font-weight: 500; }
+.browse { height: 100%; padding: 40px 64px 64px; overflow: auto; }
+.browse__head { display: flex; align-items: center; gap: 20px; }
+.browse__title { font: 600 40px/1.2 var(--font); letter-spacing: -0.03em; }
+.browse__tabs { margin-left: auto; }
+.browse__grid { margin-top: 32px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.browse__grid .poster { grid-row: auto; height: 300px; }
+.browse__grid .poster .row__sub { margin-top: 4px; }
+
+/* 시트 내부 */
+.menu-panel { display: flex; flex-direction: column; gap: 4px; }
+.menu-item { display: flex; align-items: center; gap: 16px; height: 60px; padding: 0 16px; margin: 0 -16px; border-radius: 16px; font: 600 19px/1 var(--font); letter-spacing: -0.016em; text-align: left; transition: background .2s var(--ease); }
+.menu-item:hover { background: var(--glass); }
+.menu-item > svg { width: 22px; height: 22px; color: var(--text-2); }
+.menu-item__end { margin-left: auto; display: flex; align-items: center; gap: 8px; font: 500 15px/1 var(--font); color: var(--text-3); }
+.menu-item__end svg { width: 16px; height: 16px; }
+.menu-back { display: flex; align-items: center; gap: 8px; height: 44px; margin-bottom: 8px; font: 600 15px/1 var(--font); color: var(--text-3); }
+.menu-back svg { width: 18px; height: 18px; }
+.menu-group { margin: 18px 0 6px; font: var(--t-label); letter-spacing: .09em; color: var(--text-3); }
+.mode-item { display: grid; grid-template-columns: 56px 1fr auto; gap: 14px; align-items: center; width: calc(100% + 20px); padding: 10px; margin: 0 -10px; border-radius: 16px; text-align: left; transition: background .2s var(--ease); }
+.mode-item:hover { background: var(--glass); }
+.mode-item img { width: 56px; height: 56px; border-radius: 14px; object-fit: cover; }
+.mode-item__name { display: block; font: 600 18px/1.3 var(--font); letter-spacing: -0.016em; }
+.mode-item__lead { display: block; margin-top: 2px; font: var(--t-caption); color: var(--text-3); }
+.mode-item[aria-current="true"] { box-shadow: var(--sel); background: transparent; }
+.notif { display: grid; grid-template-columns: 40px 1fr auto; gap: 14px; align-items: center; padding: 14px 0; border-top: 1px solid var(--hairline); }
+.notif:first-child { border-top: 0; }
+.notif .notice__icon { width: 40px; height: 40px; }
+.notif__time { font: var(--t-caption); color: var(--text-3); }
+.note { margin-top: 16px; padding: 14px 16px; border-radius: 14px; background: var(--glass); font: var(--t-small); color: var(--text-2); }
+.qr { display: grid; grid-template-columns: 240px 1fr; gap: 32px; align-items: center; }
+.qr svg { border-radius: 20px; background: var(--c-50); padding: 16px; }
+.qr__state { margin-top: 20px; display: flex; align-items: center; gap: 10px; font: var(--t-small); color: var(--text-2); }
+.qr__state.is-done { color: var(--text-1); }
+.spinner { width: 18px; height: 18px; border-radius: 50%; border: 2px solid rgba(244, 245, 246, .2); border-top-color: var(--c-50); animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.map { position: relative; height: 420px; border-radius: 24px; overflow: hidden; background: radial-gradient(120% 120% at 50% 110%, #1b2230 0%, #0d1016 60%, #08090b 100%); box-shadow: inset 0 0 0 var(--hair, 1px) var(--hairline); }
+.map svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.stats { margin-top: 24px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.stat { padding: 18px 20px; border-radius: 18px; background: var(--glass); }
+.stat dt { font: var(--t-caption); color: var(--text-3); }
+.stat dd { margin-top: 6px; font: 600 26px/1.15 var(--font); letter-spacing: -0.025em; }
+.dish { display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: center; padding: 18px 0; border-top: 1px solid var(--hairline); }
+.dish:first-child { border-top: 0; }
+.dish__name { font: 600 19px/1.3 var(--font); letter-spacing: -0.016em; }
+.dish__desc { margin-top: 4px; font: var(--t-small); color: var(--text-3); }
+.journal { width: 100%; height: 180px; resize: none; padding: 18px 20px; border-radius: 18px; border: 0; background: var(--glass); box-shadow: inset 0 0 0 var(--hair, 1px) var(--hairline); font: var(--t-body); letter-spacing: -0.012em; color: var(--text-1); outline: none; }
+.journal:focus { box-shadow: inset 0 0 0 2px var(--a-300); }
+.entry { padding: 14px 0; border-top: 1px solid var(--hairline); font: var(--t-small); color: var(--text-2); }
+.entry time { display: block; font: var(--t-caption); color: var(--text-3); margin-bottom: 4px; }
+.share-link { display: flex; align-items: center; gap: 12px; padding: 0 8px 0 20px; height: 56px; border-radius: 999px; background: var(--glass); font: var(--t-small); color: var(--text-2); }
+.share-link span { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.seat-pose { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.pose { padding: 24px 16px 20px; border-radius: 20px; text-align: center; box-shadow: inset 0 0 0 var(--hair, 1px) var(--hairline); font: 600 16px/1.3 var(--font); transition: box-shadow .2s var(--ease), background .2s var(--ease); }
+.pose svg { width: 64px; height: 64px; margin: 0 auto 14px; color: var(--text-2); }
+.pose[aria-checked="true"] { box-shadow: var(--sel); background: transparent; }
+.pose[aria-checked="true"] svg { color: var(--text-1); }
+
+/* 플레이어 */
+.player { position: relative; width: 100%; height: 100%; }
+.player > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .7; }
+.player::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0, 0, 0, .55) 0%, transparent 25%, transparent 55%, rgba(0, 0, 0, .9) 100%); }
+.player > * { position: relative; z-index: 1; }
+.player__top { position: absolute; left: 64px; right: 64px; top: 40px; display: flex; justify-content: space-between; align-items: center; }
+.player__score { display: flex; align-items: center; gap: 18px; padding: 12px 22px; border-radius: 999px; background: rgba(9, 10, 12, .6); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); font: 600 20px/1 var(--font); font-variant-numeric: tabular-nums; }
+.player__bottom { position: absolute; left: 96px; right: 96px; bottom: 64px; }
+.player__kind { font: var(--t-label); letter-spacing: .09em; color: var(--text-2); }
+.player__title { margin-top: 10px; font: 700 64px/1.1 var(--font); letter-spacing: -0.04em; }
+.player__bar { margin-top: 32px; height: 4px; border-radius: 4px; background: rgba(244, 245, 246, .2); cursor: pointer; }
+.player__bar i { display: block; height: 100%; border-radius: inherit; background: var(--c-50); }
+.player__row { margin-top: 14px; display: flex; justify-content: space-between; font: var(--t-small); color: var(--text-2); font-variant-numeric: tabular-nums; }
+.player__ctrls { margin-top: 24px; display: flex; align-items: center; gap: 16px; }
+.player__ctrls .round-btn { width: 64px; height: 64px; }
+.player__ctrls .play-main { width: 80px; height: 80px; background: var(--c-50); color: var(--c-950); }
+.player__ctrls .play-main svg { width: 28px; height: 28px; }
+.player__ctrls .skip { font: 600 14px/1 var(--font); }
+
+/* 잠자기 화면 */
+.sleep-screen { position: absolute; inset: 0; z-index: 850; background: #000; display: grid; place-items: center; text-align: center; opacity: 0; pointer-events: none; transition: opacity .8s var(--ease); }
+.sleep-screen.is-on { opacity: 1; pointer-events: auto; }
+.sleep-screen__time { font: 300 140px/1 var(--font); letter-spacing: -0.04em; color: rgba(244, 245, 246, .28); font-variant-numeric: tabular-nums; }
+.sleep-screen__sub { margin-top: 18px; font: var(--t-small); color: rgba(244, 245, 246, .3); }
+.sleep-screen .btn { margin-top: 48px; background: rgba(244, 245, 246, .06); color: rgba(244, 245, 246, .5); }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-plane" viewBox="0 0 24 24"><path fill="currentColor" d="M21 15.5v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V8.5l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-6z" transform="rotate(90 12 12)"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+    <symbol id="i-wifi" viewBox="0 0 24 24"><path d="M2.5 9a14 14 0 0 1 19 0M5.5 12.5a9.5 9.5 0 0 1 13 0M8.8 16a5 5 0 0 1 6.4 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="19.2" r="1.3" fill="currentColor"/></symbol>
+    <symbol id="i-headphones" viewBox="0 0 24 24"><path d="M4 15v-3a8 8 0 0 1 16 0v3M4 15a2 2 0 0 1 2-2h1v7H6a2 2 0 0 1-2-2zm16 0a2 2 0 0 0-2-2h-1v7h1a2 2 0 0 0 2-2z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></symbol>
+    <symbol id="i-light" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.4.9 1 .9 1.7V16h5.2v-.4c0-.7.3-1.3.9-1.7A6 6 0 0 0 12 3z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15zM10 20.5a2 2 0 0 0 4 0" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></symbol>
+    <symbol id="i-attendant" viewBox="0 0 24 24"><circle cx="12" cy="7" r="3.2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M5.5 20a6.5 6.5 0 0 1 13 0" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
+    <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 2.8v2.4M12 18.8v2.4M21.2 12h-2.4M5.2 12H2.8M18.5 5.5l-1.7 1.7M7.2 16.8l-1.7 1.7M18.5 18.5l-1.7-1.7M7.2 7.2 5.5 5.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
+    <symbol id="i-left" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-right" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4.5v15l12.5-7.5z" fill="currentColor"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24"><path d="M7 4.5h3.5v15H7zM13.5 4.5H17v15h-3.5z" fill="currentColor"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-meal" viewBox="0 0 24 24"><path d="M7 3v8M4.5 3v5a2.5 2.5 0 0 0 5 0V3M7 11v10M17 21V3c-2.2 1.2-3.5 3.6-3.5 7v3H17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></symbol>
+    <symbol id="i-ball" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="m12 8 3.3 2.4-1.3 3.9h-4l-1.3-3.9zM12 8V3.5M15.3 10.4l4.3-1.4M14 14.3l2.6 3.6M10 14.3l-2.6 3.6M8.7 10.4 4.4 9" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></symbol>
+    <symbol id="i-sunfull" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
+    <symbol id="i-half" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></symbol>
+    <symbol id="i-mute" viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4zM16 9.5l5 5M21 9.5l-5 5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-wave" viewBox="0 0 24 24"><path d="M3 12h2M7 8v8M11 5v14M15 9v6M19 11v2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+    <symbol id="i-rain" viewBox="0 0 24 24"><path d="M7 15a4.5 4.5 0 1 1 1.2-8.8A6 6 0 0 1 19 9a3.5 3.5 0 0 1-1 6.8M9 18l-1 3M13 18l-1 3M17 18l-1 3" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><rect x="6.5" y="2.5" width="11" height="19" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M10.5 18.5h3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-train" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="14" rx="3" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M5 11h14M8 21l2-4M16 21l-2-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="9" cy="14" r="1" fill="currentColor"/><circle cx="15" cy="14" r="1" fill="currentColor"/></symbol>
+    <symbol id="i-car" viewBox="0 0 24 24"><path d="M4 16v-4l2-5h12l2 5v4zM4 16v2.5M20 16v2.5M4 12h16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><circle cx="8" cy="14" r="1" fill="currentColor"/><circle cx="16" cy="14" r="1" fill="currentColor"/></symbol>
+    <symbol id="i-bus" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="15" rx="3" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M5 10h14M8 18v3M16 18v3M9 6h6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-6.5-6-6.5-11a6.5 6.5 0 0 1 13 0c0 5-6.5 11-6.5 11z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><circle cx="12" cy="10" r="2.3" fill="none" stroke="currentColor" stroke-width="1.7"/></symbol>
+    <symbol id="i-pen" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16zM13.5 6.5l4 4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></symbol>
+    <symbol id="i-share" viewBox="0 0 24 24"><path d="M12 15V3.5M7.5 8 12 3.5 16.5 8M5 12v7.5h14V12" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-film" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M10 9.5v5l4.5-2.5z" fill="currentColor"/></symbol>
+    <symbol id="i-music" viewBox="0 0 24 24"><path d="M9 18V5.5l11-2V16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><circle cx="6.5" cy="18" r="2.5" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="17.5" cy="16" r="2.5" fill="none" stroke="currentColor" stroke-width="1.7"/></symbol>
+    <symbol id="i-map" viewBox="0 0 24 24"><path d="M3.5 6.5 9 4l6 2.5L20.5 4v13.5L15 20l-6-2.5-5.5 2.5zM9 4v13.5M15 6.5V20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 2 3 7l9 5 9-5zM3 11.5l9 5 9-5M3 16l9 5 9-5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></symbol>
+    <symbol id="i-laptop" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="10" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M3 19h18" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
+    <symbol id="i-seat-up" viewBox="0 0 24 24"><path d="M8 20h8M9 20V5M9 15h7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-seat-lounge" viewBox="0 0 24 24"><path d="M6 20h12M8 20 6 7M8 16h9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-seat-bed" viewBox="0 0 24 24"><path d="M3 16h18M3 16v-4M3 13h18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  </defs>
+</svg>
+
+<main class="stage" id="stage" aria-label="MOMEN">
+  <div class="backdrop" aria-hidden="true" data-backdrop></div>
+
+  <header class="topbar">
+    <div class="topbar__group">
+      <button class="pill" type="button" data-open="menu"><svg><use href="#i-menu"/></svg><span data-i18n="menu"></span><span class="pill__mode" data-mode-name></span></button>
+      <button class="pill" type="button" data-open="map"><svg><use href="#i-plane"/></svg><span data-i18n="to_dest"></span> <strong class="num" data-remaining></strong></button>
+    </div>
+    <div class="wordmark" aria-label="MOMEN">MOMEN</div>
+    <div class="topbar__group">
+      <div class="status" role="group">
+        <span class="is-on" title="Wi-Fi"><svg><use href="#i-wifi"/></svg></span>
+        <span class="is-on" title="Headphones"><svg><use href="#i-headphones"/></svg></span>
+        <i class="status__sep" aria-hidden="true"></i>
+        <button type="button" data-toggle="light" aria-pressed="false"><svg><use href="#i-light"/></svg></button>
+        <button type="button" data-open="notifs"><svg><use href="#i-bell"/></svg><i class="badge" data-badge></i></button>
+        <button type="button" data-toggle="call" aria-pressed="false"><svg><use href="#i-attendant"/></svg></button>
+        <button type="button" data-open="settings" data-i18n-label="settings"><svg><use href="#i-gear"/></svg></button>
+      </div>
+      <button class="pill" type="button" data-open="seat"><strong>32A</strong></button>
+    </div>
+  </header>
+
+  <section class="view" data-view aria-live="polite"></section>
+
+  <div class="sleep-screen" data-sleep>
+    <div>
+      <p class="sleep-screen__time" data-sleep-clock></p>
+      <p class="sleep-screen__sub" data-sleep-sub></p>
+      <button class="btn" type="button" data-wake></button>
+    </div>
+  </div>
+</main>
+
+<script src="proto.js?v=1006215408"></script>
+<script>
+(function () {
+  "use strict";
+  // 새로고침하면 시작 화면부터 다시
+  const nav = performance.getEntriesByType && performance.getEntriesByType("navigation")[0];
+  if (nav && nav.type === "reload") { location.replace("start.html"); return; }
+  const P = window.Proto, S = P.state, t = P.t;
+  const $ = (s, r = document) => r.querySelector(s);
+  const stage = $("#stage"), view = $("[data-view]");
+  const icon = (id) => `<svg><use href="#i-${id}"/></svg>`;
+  const img = (n) => `../assets/scenes/${n}.webp`;
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const BG = { ENJOY: "dawn", REST: "rest-amber", WORK: "board-amber", PREPARE: "landing-airport", TRAVEL: "paris" };
+  const MODE_IMG = { ENJOY: "enjoy-amber", REST: "rest-amber", WORK: "board-amber", PREPARE: "landing-airport", TRAVEL: "paris" };
+
+  // 비행 시계 — 파리 현지 기준. 출발 17:40, 비행 830분, 도착 07:30
+  const TOTAL = 830, DEP = 17 * 60 + 40;
+  let elapsed = 128;
+  const clock = (at) => { const m = ((Math.round(DEP + at)) % 1440 + 1440) % 1440; return `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`; };
+  const fmt = (s) => `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
+  const fmt2 = (s) => { const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), x = s % 60; return `${h ? h + ":" : ""}${String(m).padStart(h ? 2 : 1, "0")}:${String(x).padStart(2, "0")}`; };
+
+  // 저장 상태 기본값
+  const def = (k, v) => { if (S[k] === undefined) S[k] = v; };
+  def("light", false); def("call", false); def("meal", null); def("steps", []); def("route", "tr1");
+  def("saved", []); def("entries", []); def("restLight", "soft"); def("soundscape", "ss_white");
+  def("wakeMeal", true); def("wakeLand", true); def("sleepAt", 230); def("wakeAt", 720);
+  def("taskLight", true); def("holdAlerts", true); def("seatPose", "upright"); def("dish", null);
+  def("tab", "continue"); def("cat", "cat_all"); def("myList", []); def("focusLen", 25);
+  if (!P.MODES.includes(S.mode)) S.mode = "ENJOY";
+  P.save();
+
+  /* 배경 */
+  const backdrop = $("[data-backdrop]");
+  // 모드 배경에는 이미지를 깔지 않는다 — 단색 차콜 위에 카드만
+  const showBg = () => {};
+
+  /* 콘텐츠 */
+  const MEDIA = {
+    psg: { kind: "LIVE · LIGUE 1", title: "PSG vs. Lyon", img: "enjoy-amber", dur: 90 * 60, pos: 64 * 60, live: true },
+    film: { kind: "FILM · 1995", title: "Before Sunrise", img: "dawn", dur: 101 * 60, pos: 59 * 60 },
+    audio: { kind: "PLAYLIST · 12", title: "Night Crossing", img: "rest-amber", dur: 48 * 60, pos: 0 },
+    midnight: { kind: "FILM · 2011", title: "Midnight in Paris", img: "paris", dur: 94 * 60, pos: 0 },
+    amelie: { kind: "FILM · 2001", title: "Amélie", img: "landing-paris-amber", dur: 122 * 60, pos: 18 * 60 },
+    terminal: { kind: "FILM · 2004", title: "The Terminal", img: "landing-airport", dur: 128 * 60, pos: 0 },
+    air: { kind: "FILM · 2009", title: "Up in the Air", img: "window", dur: 109 * 60, pos: 0 },
+    rg: { kind: "LIVE · TENNIS", title: "Roland-Garros", img: "overhead", dur: 180 * 60, pos: 41 * 60, live: true },
+    tdf: { kind: "HIGHLIGHTS", title: "Tour de France", img: "runway", dur: 52 * 60, pos: 0 },
+    jazz: { kind: "PLAYLIST · 18", title: "Paris After Dark", img: "landing-paris-amber", dur: 64 * 60, pos: 0 },
+    cloud: { kind: "ALBUM · 9", title: "Cloud Walk", img: "prepare-amber", dur: 41 * 60, pos: 0 },
+    ucl: { kind: "LIVE · UCL", title: "Champions League", img: "cabin", dur: 90 * 60, pos: 12 * 60, live: true },
+    focus: { kind: "PLAYLIST · 24", title: "Deep Focus", img: "concept-depth", dur: 90 * 60, pos: 0 },
+    sunset: { kind: "FILM · 2004", title: "Before Sunset", img: "landing-paris-amber", dur: 80 * 60, pos: 0 },
+    lost: { kind: "FILM · 2003", title: "Lost in Translation", img: "board-amber", dur: 102 * 60, pos: 0 },
+    jetaime: { kind: "FILM · 2006", title: "Paris, je t'aime", img: "concept-flow", dur: 120 * 60, pos: 0 },
+    ratatouille: { kind: "FILM · 2007", title: "Ratatouille", img: "concept-light", dur: 111 * 60, pos: 0 },
+    six: { kind: "LIVE · RUGBY", title: "Six Nations", img: "runway", dur: 80 * 60, pos: 22 * 60, live: true },
+    marathon: { kind: "REPLAY", title: "Paris Marathon", img: "prepare-amber", dur: 150 * 60, pos: 0 },
+    l1: { kind: "HIGHLIGHTS", title: "Ligue 1 Weekly", img: "cabin", dur: 30 * 60, pos: 0 },
+    atp: { kind: "REPLAY · TENNIS", title: "Paris Masters", img: "dawn", dur: 140 * 60, pos: 0 },
+    lofi: { kind: "PLAYLIST · 30", title: "Lo-fi Altitude", img: "window", dur: 95 * 60, pos: 0 },
+    chanson: { kind: "PLAYLIST · 20", title: "Chanson du Soir", img: "paris", dur: 70 * 60, pos: 0 },
+    ambient: { kind: "ALBUM · 8", title: "Above the Clouds", img: "overhead", dur: 44 * 60, pos: 0 },
+    blue: { kind: "ALBUM · 11", title: "Blue Hour Jazz", img: "concept-depth", dur: 52 * 60, pos: 0 },
+  };
+  const SHELF = { continue: ["psg", "film", "audio", "amelie"], film: ["midnight", "amelie", "terminal", "air"], live: ["psg", "rg", "tdf", "ucl"], music: ["audio", "jazz", "cloud", "focus"] };
+  const TAB_KEY = { continue: "continue", film: "tab_film", live: "tab_live", music: "m_music" };
+  // 전체 보기 — 갈래별 카탈로그
+  const CATALOG = {
+    film: { genres: ["g_romance", "g_drama", "g_comedy"], items: [["film", "g_romance"], ["midnight", "g_comedy"], ["amelie", "g_comedy"], ["terminal", "g_drama"], ["air", "g_drama"], ["sunset", "g_romance"], ["lost", "g_drama"], ["jetaime", "g_romance"]] },
+    live: { genres: ["g_football", "g_tennis", "g_more"], items: [["psg", "g_football"], ["ucl", "g_football"], ["l1", "g_football"], ["rg", "g_tennis"], ["atp", "g_tennis"], ["tdf", "g_more"], ["six", "g_more"], ["marathon", "g_more"]] },
+    music: { genres: ["g_calm", "g_jazz", "g_focus"], items: [["audio", "g_calm"], ["ambient", "g_calm"], ["cloud", "g_calm"], ["jazz", "g_jazz"], ["blue", "g_jazz"], ["chanson", "g_jazz"], ["focus", "g_focus"], ["lofi", "g_focus"]] },
+  };
+  const VIEWS = {};
+
+  /* ── 감상: 대표 콘텐츠 / 탭 / 포스터 4 ── */
+  const mealFloat = () => {
+    const m = S.meal;
+    return `<div class="card meal-float"><span class="notice__icon">${icon("meal")}</span><div>
+      <p class="notice__title">${t(m ? `meal_${m}_t` : "meal_title")}</p>
+      <p class="notice__body">${t(m ? `meal_${m}_b` : "meal_body")}</p>
+      <div class="actions">${m ? `<button class="btn btn--text" type="button" data-meal="">${t("change")}</button>` : `<button class="btn btn--primary" type="button" data-meal="later">${t("meal_later")}</button><button class="btn btn--ghost" type="button" data-meal="now">${t("meal_now")}</button>`}</div>
+    </div></div>`;
+  };
+  const COLS4 = ["c1-3", "c4-6", "c7-9", "c10-12b"];
+  const poster = (k, i) => { const m = MEDIA[k]; return `<button class="poster ${COLS4[i]}" type="button" data-play="${k}"><img src="${img(m.img)}" alt=""><span class="poster__kind">${m.live ? `<span class="live-dot">${m.kind}</span>` : m.kind}</span><span class="poster__title">${m.title}</span>${m.pos ? `<span class="bar"><i style="width:${(m.pos / m.dur) * 100}%"></i></span>` : ""}</button>`; };
+  VIEWS.ENJOY = () => {
+    const inList = S.myList.includes("psg");
+    return `
+    <section class="enjoy-feature c1-12">
+      <img src="${img("enjoy-amber")}" alt="">
+      <div class="enjoy-feature__body">
+        <p class="eyebrow"><span class="live-dot">LIVE</span><i></i>LIGUE 1</p>
+        <h1 class="enjoy-feature__title">PSG vs. Lyon</h1>
+        <p class="enjoy-feature__meta"><b>PSG 1 – 0 LYO</b><span>·</span><span>${t("psg_sub")}</span></p>
+        <div class="actions">
+          <button class="btn btn--primary btn--lg" type="button" data-play="psg">${icon("play")}${t("resume_at", 64)}</button>
+          <button class="btn btn--ghost btn--lg" type="button" data-play-start="psg">${t("from_start")}</button>
+          <button class="btn btn--ghost btn--lg" type="button" data-mylist="psg" aria-pressed="${inList}">${icon(inList ? "check" : "plus")}${t("my_list")}</button>
+        </div>
+      </div>
+      ${mealFloat()}
+    </section>
+    <div class="shelf-head c1-12">
+      <div class="tabs" role="tablist">${Object.keys(SHELF).map((k) => `<button type="button" role="tab" aria-selected="${S.tab === k}" data-tab="${k}">${t(TAB_KEY[k])}</button>`).join("")}</div>
+      ${S.tab === "continue" ? `<span class="card__more">${t("continue_note")}</span>` : `<button class="btn btn--ghost browse-btn" type="button" data-browse="${S.tab}">${t("browse_all")} <span class="num">${CATALOG[S.tab].items.length}</span>${icon("right")}</button>`}
+    </div>
+    ${SHELF[S.tab].slice(0, 4).map(poster).join("")}`;
+  };
+
+  /* ── 휴식: 왼쪽 8칸(문구·수면 시간대·시각·잠들기) / 오른쪽 4칸(조명·소리·깨울 순간·좌석) ── */
+  VIEWS.REST = () => {
+    const pct = (at) => (at / TOTAL) * 100;
+    const dial = (key, val, ic, cur, label) => `<button class="dial" type="button" data-${key}="${val}" aria-pressed="${cur === val}">${icon(ic)}${label}</button>`;
+    return `
+    <div class="rest-head c1-8">
+      <p class="eyebrow"><b>${t("name_REST")}</b></p>
+      <h1 class="h-hero">${t("rest_head")}</h1>
+      <p class="h-sub">${t("rest_sub")}</p>
+    </div>
+    <section class="card sleep-win c1-8">
+      <div class="card__head"><h2 class="card__title">${t("sleep_window")}</h2><span class="card__more num">${P.hm(S.wakeAt - S.sleepAt)}</span></div>
+      <div class="sleep-bar__track">
+        <div class="sleep-bar__win" style="left:${pct(S.sleepAt)}%;width:${pct(S.wakeAt - S.sleepAt)}%">${icon("moon")}<span class="num">${clock(S.sleepAt)} – ${clock(S.wakeAt)}</span></div>
+        <span class="sleep-bar__now" style="left:${pct(elapsed)}%"></span>
+      </div>
+      <div class="sleep-bar__ticks"><span>${t("now")} ${clock(elapsed)}</span><span>${clock(TOTAL / 2)}</span><span>${t("arrive")} 07:30</span></div>
+    </section>
+    <div class="card time-card c1-4"><div><p class="time-card__label">${t("bedtime")}</p><p class="time-card__value">${clock(S.sleepAt)}</p></div><div class="stepper"><button type="button" data-shift="sleepAt" data-d="-15">${icon("left")}</button><button type="button" data-shift="sleepAt" data-d="15">${icon("right")}</button></div></div>
+    <div class="card time-card c5-8"><div><p class="time-card__label">${t("waketime")}</p><p class="time-card__value">${clock(S.wakeAt)}</p></div><div class="stepper"><button type="button" data-shift="wakeAt" data-d="-15">${icon("left")}</button><button type="button" data-shift="wakeAt" data-d="15">${icon("right")}</button></div></div>
+    <button class="card sleep-cta c1-4" type="button" data-sleep-now>${icon("moon")}<span><span class="sleep-cta__title" style="display:block">${t("sleep_now")}</span><span class="sleep-cta__sub" style="display:block">${t("wake_meal")} · ${clock(S.wakeAt)}</span></span></button>
+    <button class="card media-card c5-8" type="button" data-play="audio"><img src="${img("rest-amber")}" alt=""><span><span class="poster__kind">PLAYLIST · 12</span><span class="poster__title" style="display:block">Night Crossing</span><span class="row__sub">${t("playlist")}</span></span><span class="mini">${icon("play")}</span></button>
+    <section class="card rest-r1 c9-12"><div class="card__head"><h2 class="card__title">${t("light_level")}</h2></div>
+      <div class="dial-group">${dial("rl", "bright", "sunfull", S.restLight, t("lv_bright"))}${dial("rl", "soft", "half", S.restLight, t("lv_soft"))}${dial("rl", "dark", "moon", S.restLight, t("lv_dark"))}</div></section>
+    <section class="card rest-r2 c9-12"><div class="card__head"><h2 class="card__title">${t("soundscape")}</h2></div>
+      <div class="dial-group">${dial("ss", "ss_none", "mute", S.soundscape, t("ss_none"))}${dial("ss", "ss_white", "wave", S.soundscape, t("ss_white"))}${dial("ss", "ss_rain", "rain", S.soundscape, t("ss_rain"))}</div></section>
+    <section class="card rest-r3 c9-12"><div class="card__head"><h2 class="card__title">${t("wake_title")}</h2></div>
+      <div class="switch-row"><span class="switch-row__label">${t("wake_meal")} <span class="num" style="color:var(--text-3)">${clock(S.wakeAt)}</span></span><button class="switch" type="button" role="switch" aria-checked="${S.wakeMeal}" data-sw="wakeMeal"><i></i></button></div>
+      <div class="switch-row"><span class="switch-row__label">${t("wake_land")}</span><button class="switch" type="button" role="switch" aria-checked="${S.wakeLand}" data-sw="wakeLand"><i></i></button></div></section>
+    <section class="card rest-r4 c9-12"><div class="card__head"><h2 class="card__title">${t("seat_quick")}</h2></div>
+      <div class="dial-group">${dial("pose", "upright", "seat-up", S.seatPose, t("upright"))}${dial("pose", "lounge", "seat-lounge", S.seatPose, t("lounge"))}${dial("pose", "bed", "seat-bed", S.seatPose, t("bed"))}</div></section>`;
+  };
+
+  /* ── 업무: 타이머 8칸 × 4행 / 오른쪽 4칸 ── */
+  let focusLeft = S.focusLen * 60, focusTimer = 0, heldOpen = false;
+  VIEWS.WORK = () => `
+    <section class="card work-timer c1-8">
+      <p class="eyebrow"><b>${t("name_WORK")}</b></p>
+      <h1 class="h-hero" style="margin-top:16px;font-size:56px">${t("work_head")}</h1>
+      <p class="h-sub">${t("sessions", Math.floor((TOTAL - elapsed) / (S.focusLen + 5)))}</p>
+      <p class="timer" data-timer>${fmt(focusLeft)}</p>
+      <div class="timer-line"><i data-timer-bar style="width:${(1 - focusLeft / (S.focusLen * 60)) * 100}%"></i></div>
+      <div class="timer-ctrls">
+        <div class="actions"><button class="btn btn--primary btn--lg" type="button" data-focus>${icon(focusTimer ? "pause" : "play")}${t(focusTimer ? "pause" : "start")}</button><button class="btn btn--ghost btn--lg" type="button" data-focus-reset>${t("timer_reset")}</button></div>
+        <div class="seg seg--sm" role="group" style="margin:0">${[25, 50, 90].map((m) => `<button type="button" data-len="${m}" aria-pressed="${S.focusLen === m}">${t("min_fmt", m)}</button>`).join("")}</div>
+      </div>
+    </section>
+    <section class="card c9-12" style="grid-row:1"><div class="card__head"><h2 class="card__title">${t("wifi_title")}</h2><span class="chip">ON</span></div>
+      <div class="wifi"><span class="wifi__icon">${icon("laptop")}</span><span><span class="row__name">${t("wifi_on")}</span><span class="row__sub">${t("wifi_plan")}</span></span><span class="wifi__stat">38 Mbps<small>↓ 38 · ↑ 12</small></span></div></section>
+    <section class="card c9-12" style="grid-row:2"><div class="card__head"><h2 class="card__title">${t("held_title")}<span class="count">2</span></h2><button class="btn btn--ghost" type="button" data-held>${t(heldOpen ? "close" : "show_now")}</button></div>
+      <div class="held${heldOpen ? "" : " is-hidden"}">
+        <div class="held__item"><span class="notice__icon">${icon("meal")}</span><span class="row__name">${t("meal_title")}</span><span class="card__more num">${clock(132)}</span></div>
+        <div class="held__item"><span class="notice__icon">${icon("ball")}</span><span class="row__name">${t("n_match")}</span><span class="card__more num">${clock(128)}</span></div>
+      </div></section>
+    <section class="card c9-12" style="grid-row:3"><div class="card__head"><h2 class="card__title">${t("workspace")}</h2></div>
+      <div class="switch-row"><span class="switch-row__label">${t("focus_light")}</span><button class="switch" type="button" role="switch" aria-checked="${S.taskLight}" data-sw="taskLight"><i></i></button></div>
+      <div class="switch-row"><span><span class="switch-row__label">${t("hold_alerts")}</span><span class="switch-row__desc">${t("hold_desc")}</span></span><button class="switch" type="button" role="switch" aria-checked="${S.holdAlerts}" data-sw="holdAlerts"><i></i></button></div></section>
+    <button class="card media-card c9-12" type="button" data-play="focus" style="grid-row:4"><img src="${img("concept-depth")}" alt=""><span><span class="poster__kind">${t("focus_music")}</span><span class="poster__title" style="display:block">Deep Focus</span><span class="row__sub">PLAYLIST · 24</span></span><span class="mini">${icon("play")}</span></button>`;
+
+  /* ── 준비: 띠 12칸 / 체크리스트 6칸 · 교통편 6칸 · 경로 6칸 ── */
+  VIEWS.PREPARE = () => {
+    const meta = { 1: "25'", 2: "15'", 3: { tr1: "35'", tr2: "50'", tr3: "60'" }[S.route] };
+    return `
+    <section class="prep-band c1-12">
+      <img src="${img("landing-airport")}" alt="">
+      <div class="prep-band__body">
+        <div><p class="eyebrow"><b>${t("name_PREPARE")}</b><i></i>CDG · PARIS</p><h1 class="h-hero">${t("prep_head")}</h1></div>
+        <dl class="facts">
+          <div class="fact"><dt>ARRIVAL</dt><dd>07:30</dd></div><div class="fact"><dt>TERMINAL</dt><dd>2E</dd></div><div class="fact"><dt>BELT</dt><dd>31</dd></div>
+          <div class="fact"><dt>WEATHER</dt><dd>16°</dd></div><div class="fact"><dt>EUR</dt><dd>₩1,480</dd></div>
+        </dl>
+      </div>
+    </section>
+    <section class="card prep-steps c1-6 fill">
+      <div class="card__head"><h2 class="card__title">${t("checklist")}</h2><span class="card__more">${t("prep_total")} · <span class="num">${S.steps.length}/3</span></span></div>
+      <div class="vsteps grow">${[1, 2, 3].map((i) => { const done = S.steps.includes(i); return `
+        <button class="vstep${done ? " is-done" : ""}" type="button" data-step="${i}"><span class="vstep__num">${done ? icon("check") : i}</span><span><span class="vstep__name">${t(`step${i}`)}</span><span class="vstep__desc">${t(`step${i}x`)} · ${t(`step${i}d`)}</span></span><span class="vstep__meta">${meta[i]}</span></button>`; }).join("")}</div>
+    </section>
+    <section class="card prep-r2 c7-12 fill">
+      <div class="card__head"><h2 class="card__title">${t("transport")}</h2></div>
+      <div class="choices grow" role="radiogroup">${[["tr1", "train"], ["tr2", "car"], ["tr3", "bus"]].map(([k, ic]) => `
+        <button class="choice" type="button" role="radio" aria-checked="${S.route === k}" data-route="${k}"><span class="choice__top">${icon(ic)}${k === "tr1" ? `<span class="chip">${t("best")}</span>` : ""}</span><span class="choice__name">${t(k)}</span><span class="choice__sub">${t(k + "d")}</span></button>`).join("")}</div>
+    </section>
+    <section class="card prep-r3 c7-12 route-card">
+      <div class="route-card__info">
+        <h2 class="card__title">${t("route")}</h2>
+        <p class="route-line" style="margin-top:14px">${icon("pin")}<span>${t(S.route + "r")}</span></p>
+        <p class="notice__body" style="margin-top:12px">${t("qr_desc")}</p>
+        <button class="btn btn--primary btn--lg" type="button" data-open="qr">${icon("phone")}${t("send")}</button>
+      </div>
+      ${qrSvg(200).replace("<svg ", '<svg class="qr-mini" ')}
+    </section>`;
+  };
+
+  /* ── 여행: 배너 12칸 / 할 일 3장(3칸씩) / 오른쪽 3칸 ── */
+  const PLACES = [["p1", "landing-paris-amber", "cat_walk"], ["p2", "concept-light", "cat_art"], ["p3", "dawn", "cat_cafe"], ["p4", "paris", "cat_walk"], ["p5", "window", "cat_art"], ["p6", "overhead", "cat_cafe"], ["p7", "prepare-amber", "cat_walk"], ["p8", "concept-flow", "cat_art"], ["p9", "board-amber", "cat_cafe"]];
+  VIEWS.TRAVEL = () => {
+    const shown = PLACES.filter((p) => S.cat === "cat_all" || p[2] === S.cat).slice(0, 3);
+    return `
+    <section class="travel-band c1-12">
+      <img src="${img("paris")}" alt="">
+      <div class="travel-band__body"><p class="eyebrow"><b>${t("name_TRAVEL")}</b><i></i>${t("first_day")}</p><h1 class="travel-band__title">Paris</h1><p class="travel-band__meta">${t("weather")} 16° · ${t("arrive")} 07:30</p></div>
+    </section>
+    <div class="travel-head c1-9"><h2 class="card__title" style="font-size:26px">${t("discover")}</h2>
+      <div class="tabs" role="tablist">${["cat_all", "cat_walk", "cat_art", "cat_cafe"].map((c) => `<button type="button" role="tab" aria-selected="${S.cat === c}" data-cat="${c}">${t(c)}</button>`).join("")}</div></div>
+    ${shown.map(([k, im], i) => `
+      <article class="place ${["c1-3", "c4-6", "c7-9"][i]}"><div class="place__img"><img src="${img(im)}" alt=""></div><div class="place__body"><div><p class="place__name">${t(k)}</p><p class="place__sub">${t(k + "d")}</p></div><button class="save-btn" type="button" data-place="${k}" aria-pressed="${S.saved.includes(k)}">${t(S.saved.includes(k) ? "saved_place" : "save_place")}</button></div></article>`).join("")}
+    <aside class="travel-side c10-12">
+      <section class="card"><div class="card__head"><h2 class="card__title">${t("my_plan")}</h2><span class="card__more num">${S.saved.length}</span></div>
+        ${S.saved.length ? `<div class="plan-list">${S.saved.slice(0, 7).map((k) => `<p class="plan-item">${icon("pin")}${t(k)}</p>`).join("")}</div>` : `<p class="empty">${t("plan_empty")}</p>`}</section>
+      <section class="card"><div class="card__head"><h2 class="card__title">${t("record")}</h2><span class="card__more">${t("entries", S.entries.length)}</span></div>
+        <p class="notice__body" style="margin:0 0 16px">${S.entries.length ? esc(S.entries[S.entries.length - 1].text) : t("record_ph")}</p>
+        <div class="actions"><button class="btn btn--primary" type="button" data-open="journal">${icon("pen")}${t("record_save")}</button><button class="btn btn--ghost" type="button" data-open="share">${icon("share")}${t("share")}</button></div></section>
+    </aside>`;
+  };
+
+  const render = (animate) => {
+    view.dataset.mode = S.mode;
+    view.innerHTML = VIEWS[S.mode]();
+    if (animate) { view.classList.remove("is-swap"); void view.offsetWidth; view.classList.add("is-swap"); }
+  };
+  const setMode = (m, { quiet = false } = {}) => {
+    S.mode = m; P.save();
+    stage.dataset.mode = m;
+    stage.dataset.restLight = S.restLight;
+    $("[data-mode-name]").textContent = t(`name_${m}`);
+    showBg(); render(true);
+    if (!quiet) P.toast(t("t_mode", t(`name_${m}`)));
+  };
+
+  /* 화면 안 동작 */
+  view.addEventListener("click", (e) => {
+    const el = e.target.closest("button"); if (!el || el.dataset.open) return;
+    const d = el.dataset;
+    if (d.play) return openPlayer(d.play);
+    if (d.playStart) return openPlayer(d.playStart, true);
+    if (d.mylist) { const k = d.mylist, had = S.myList.includes(k); S.myList = had ? S.myList.filter((x) => x !== k) : [...S.myList, k]; P.save(); render(); if (!had) P.toast(t("t_saved")); return; }
+    if (d.tab) { S.tab = d.tab; P.save(); render(); return; }
+    if (d.browse) return openBrowse(d.browse);
+    if (d.meal !== undefined) { S.meal = d.meal || null; P.save(); render(); return; }
+    if (d.rl) { S.restLight = d.rl; P.save(); stage.dataset.restLight = S.restLight; render(); return; }
+    if (d.ss) { S.soundscape = d.ss; P.save(); render(); return; }
+    if (d.shift) {
+      const v = S[d.shift] + +d.d;
+      if (d.shift === "sleepAt") S.sleepAt = Math.min(Math.max(v, elapsed + 15), S.wakeAt - 120); else S.wakeAt = Math.min(Math.max(v, S.sleepAt + 120), 790);
+      P.save(); render(); return;
+    }
+    if (d.sw) { S[d.sw] = !S[d.sw]; P.save(); el.setAttribute("aria-checked", S[d.sw]); return; }
+    if (d.sleepNow !== undefined) return goSleep();
+    if (d.focus !== undefined) return toggleFocus();
+    if (d.focusReset !== undefined) { clearInterval(focusTimer); focusTimer = 0; focusLeft = S.focusLen * 60; render(); return; }
+    if (d.len) { clearInterval(focusTimer); focusTimer = 0; S.focusLen = +d.len; focusLeft = S.focusLen * 60; P.save(); render(); return; }
+    if (d.held !== undefined) { heldOpen = !heldOpen; render(); return; }
+    if (d.step) { const i = +d.step; S.steps = S.steps.includes(i) ? S.steps.filter((x) => x !== i) : [...S.steps, i]; P.save(); render(); return; }
+    if (d.route) { S.route = d.route; P.save(); render(); P.toast(t("t_route", t(d.route))); return; }
+    if (d.pose) { S.seatPose = d.pose; P.save(); render(); P.toast(t("t_seat", t(S.seatPose))); return; }
+    if (d.cat) { S.cat = d.cat; P.save(); render(); return; }
+    if (d.place) { const k = d.place, had = S.saved.includes(k); S.saved = had ? S.saved.filter((x) => x !== k) : [...S.saved, k]; P.save(); render(); if (!had) P.toast(t("t_saved")); return; }
+  });
+
+  const toggleFocus = () => {
+    if (focusTimer) { clearInterval(focusTimer); focusTimer = 0; render(); return; }
+    focusTimer = setInterval(() => {
+      focusLeft = Math.max(0, focusLeft - 1);
+      const el = $("[data-timer]"), bar = $("[data-timer-bar]");
+      if (el) el.textContent = fmt(focusLeft);
+      if (bar) bar.style.width = `${(1 - focusLeft / (S.focusLen * 60)) * 100}%`;
+      if (!focusLeft) { clearInterval(focusTimer); focusTimer = 0; focusLeft = S.focusLen * 60; P.toast(t("t_focus_done")); if (S.mode === "WORK") render(); }
+    }, 1000);
+    render();
+  };
+
+  /* 전체 보기 — 갈래로 거르고 포스터를 눌러 재생 */
+  const openBrowse = (tab) => {
+    const cat = CATALOG[tab]; let g = "cat_all";
+    const s = P.sheet({ full: true, body: `<div class="browse"><header class="browse__head">
+        <button class="round-btn" type="button" data-close aria-label="${t("close")}">${icon("left")}</button>
+        <h2 class="browse__title">${t(TAB_KEY[tab])}</h2><span class="card__more num" data-count></span>
+        <div class="tabs browse__tabs" role="tablist" data-genres></div></header>
+        <div class="browse__grid" data-grid></div></div>` });
+    const draw = () => {
+      const list = cat.items.filter(([, gg]) => g === "cat_all" || gg === g);
+      s.body.querySelector("[data-genres]").innerHTML = ["cat_all", ...cat.genres].map((x) => `<button type="button" role="tab" aria-selected="${g === x}" data-g="${x}">${t(x)}</button>`).join("");
+      s.body.querySelector("[data-count]").textContent = list.length;
+      s.body.querySelector("[data-grid]").innerHTML = list.map(([k, gg]) => { const m = MEDIA[k]; return `<button class="poster" type="button" data-play="${k}"><img src="${img(m.img)}" alt=""><span class="poster__kind">${m.live ? `<span class="live-dot">${m.kind}</span>` : m.kind}</span><span class="poster__title">${m.title}</span><span class="row__sub">${t(gg)}</span>${m.pos ? `<span class="bar"><i style="width:${(m.pos / m.dur) * 100}%"></i></span>` : ""}</button>`; }).join("");
+    };
+    s.body.addEventListener("click", (e) => {
+      const x = e.target.closest("[data-g]"); if (x) { g = x.dataset.g; draw(); return; }
+      const pl = e.target.closest("[data-play]"); if (pl) openPlayer(pl.dataset.play);
+    });
+    draw();
+  };
+
+  /* 열리는 화면들 */
+  const OPEN = {
+    // 메뉴 — 1뎁스 목록, '모드'를 누르면 2뎁스로 다섯 모드
+    menu() {
+      const s = P.sheet({ side: true, title: "MOMEN", body: "" });
+      const main = () => {
+        const items = [
+          ["m_modes", "layers", "modes"], ["m_watch", "film", () => openPlayer("film")], ["m_music", "music", () => openPlayer("audio")],
+          ["m_dine", "meal", () => OPEN.dine()], ["map_title", "map", () => OPEN.map()], ["settings", "gear", () => P.openSettings()],
+        ];
+        s.body.innerHTML = `<nav class="menu-panel">${items.map(([k, ic, act], i) => `<button class="menu-item" type="button" data-i="${i}">${icon(ic)}${t(k)}${act === "modes" ? `<span class="menu-item__end">${t(`name_${S.mode}`)}${icon("right")}</span>` : ""}</button>`).join("")}</nav>`;
+        s.body.onclick = (e) => { const b = e.target.closest("[data-i]"); if (!b) return; const act = items[+b.dataset.i][2]; if (act === "modes") return modes(); s.close(); setTimeout(act, 200); };
+      };
+      const modes = () => {
+        const row = (m) => `<button class="mode-item" type="button" data-m="${m}" aria-current="${S.mode === m}"><img src="${img(MODE_IMG[m])}" alt=""><span><span class="mode-item__name">${t(`name_${m}`)}</span><span class="mode-item__lead">${t(`lead_${m}`).replace("<br>", " ")}</span></span>${S.mode === m ? `<span class="chip">${t("current")}</span>` : ""}</button>`;
+        s.body.innerHTML = `<button class="menu-back" type="button" data-back>${icon("left")}${t("back")}</button>
+          <p class="menu-group">${t("group_in")}</p>${["ENJOY", "REST", "WORK"].map(row).join("")}
+          <p class="menu-group">${t("group_out")}</p>${P.OUT_MODES.map(row).join("")}`;
+        s.body.onclick = (e) => {
+          if (e.target.closest("[data-back]")) return main();
+          const b = e.target.closest("[data-m]"); if (!b) return;
+          s.close(); if (b.dataset.m !== S.mode) setTimeout(() => setMode(b.dataset.m), 200);
+        };
+      };
+      main();
+    },
+    map() {
+      const p = elapsed / TOTAL;
+      const x0 = 760, y0 = 300, x1 = 128, y1 = 300, cx = 444, cy = 40;
+      const bx = (1 - p) ** 2 * x0 + 2 * (1 - p) * p * cx + p * p * x1, by = (1 - p) ** 2 * y0 + 2 * (1 - p) * p * cy + p * p * y1;
+      P.sheet({ wide: true, title: t("map_title"), body: `
+        <div class="map"><svg viewBox="0 0 888 420" preserveAspectRatio="xMidYMid meet">
+          <defs><linearGradient id="g" gradientUnits="userSpaceOnUse" x1="${x0}" x2="${x1}" y1="0" y2="0"><stop offset="0" stop-color="#E1A974"/><stop offset="${p}" stop-color="#E1A974"/><stop offset="${p}" stop-color="#F4F5F6" stop-opacity=".25"/><stop offset="1" stop-color="#F4F5F6" stop-opacity=".25"/></linearGradient></defs>
+          <path d="M0 380 Q444 300 888 380" fill="none" stroke="#F4F5F6" stroke-opacity=".08" stroke-width="2"/>
+          <path d="M${x0} ${y0} Q${cx} ${cy} ${x1} ${y1}" fill="none" stroke="url(#g)" stroke-width="3" stroke-dasharray="2 10" stroke-linecap="round"/>
+          <circle cx="${x0}" cy="${y0}" r="7" fill="#F4F5F6"/><circle cx="${x1}" cy="${y1}" r="7" fill="none" stroke="#F4F5F6" stroke-width="2"/>
+          <text x="${x0}" y="${y0 + 34}" fill="#B3B4B7" font-size="16" text-anchor="middle" font-family="Pretendard Variable">Seoul ICN</text>
+          <text x="${x1}" y="${y1 + 34}" fill="#F4F5F6" font-size="16" text-anchor="middle" font-weight="600" font-family="Pretendard Variable">Paris CDG</text>
+          <g transform="translate(${bx} ${by}) rotate(180)"><circle r="26" fill="#E1A974" fill-opacity=".18"/><use href="#i-plane" x="-14" y="-14" width="28" height="28" color="#F4F5F6"/></g>
+        </svg></div>
+        <dl class="stats">
+          <div class="stat"><dt>${t("altitude")}</dt><dd class="num">11,280 m</dd></div>
+          <div class="stat"><dt>${t("speed")}</dt><dd class="num">905 km/h</dd></div>
+          <div class="stat"><dt>${t("outside")}</dt><dd class="num">−54°</dd></div>
+          <div class="stat"><dt>${t("distance")}</dt><dd class="num">${Math.round(8950 * (1 - p)).toLocaleString()} km</dd></div>
+        </dl>` });
+    },
+    notifs() {
+      const list = [["meal", t("meal_title"), t("now")], ["ball", t("n_match"), clock(elapsed)], ["moon", t("n_sleep").replace("22:40", clock(S.sleepAt)), clock(S.sleepAt)]];
+      P.sheet({ title: t("notifications"), body: `<div>${list.map(([ic, text, time]) => `<div class="notif"><span class="notice__icon">${icon(ic)}</span><span class="row__name">${text}</span><span class="notif__time num">${time}</span></div>`).join("")}</div>${S.dnd ? `<p class="note">${t("n_empty_dnd")}</p>` : ""}` });
+      $("[data-badge]").hidden = true;
+    },
+    settings() { P.openSettings(); },
+    seat() {
+      const poses = { upright: "M20 52h20M24 52V18M24 40h18", lounge: "M14 52h28M20 52l-6-30M20 44h22", bed: "M8 44h48M8 44V34M8 36h48" };
+      const s = P.sheet({ title: t("seat_title"), body: `<div class="seat-pose" role="radiogroup">${Object.keys(poses).map((k) => `<button class="pose" type="button" role="radio" aria-checked="${S.seatPose === k}" data-pose="${k}"><svg viewBox="0 0 64 64"><path d="${poses[k]}" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>${t(k)}</button>`).join("")}</div>`, onClose: () => { if (S.mode === "WORK") render(); } });
+      s.body.addEventListener("click", (e) => { const b = e.target.closest("[data-pose]"); if (!b) return; S.seatPose = b.dataset.pose; P.save(); s.body.querySelectorAll("[data-pose]").forEach((x) => x.setAttribute("aria-checked", String(x === b))); P.toast(t("t_seat", t(S.seatPose))); });
+    },
+    dine() {
+      const s = P.sheet({ title: t("dine_title"), body: `<div>${["dish1", "dish2"].map((k) => `<div class="dish"><div><p class="dish__name">${t(k)}</p><p class="dish__desc">${t(k + "d")}</p></div><button class="btn ${S.dish === k ? "btn--primary" : "btn--ghost"}" type="button" data-dish="${k}">${t(S.dish === k ? "chosen" : "choose")}</button></div>`).join("")}</div>` });
+      s.body.addEventListener("click", (e) => { const b = e.target.closest("[data-dish]"); if (!b) return; S.dish = b.dataset.dish; P.save(); s.close(); P.toast(t("t_dish", t(S.dish))); });
+    },
+    qr() {
+      const s = P.sheet({ title: t("qr_title"), body: `<div class="qr">${qrSvg()}<div><p class="notice__body" style="font-size:17px;line-height:1.55">${t("qr_desc")}</p><p class="qr__state" data-qs><span class="spinner"></span>${t("qr_waiting")}</p></div></div>` });
+      setTimeout(() => { const q = s.body.querySelector("[data-qs]"); if (!q) return; q.classList.add("is-done"); q.innerHTML = `${icon("check")}${t("t_sent")}`; q.querySelector("svg").style.cssText = "width:18px;height:18px;color:var(--a-300)"; P.toast(t("t_sent")); }, 2400);
+    },
+    journal() {
+      const s = P.sheet({ title: t("record"), body: `
+        <textarea class="journal" placeholder="${t("record_ph")}" data-j></textarea>
+        <div class="sheet__foot"><span class="card__more">${t("entries", S.entries.length)}</span><button class="btn btn--primary" type="button" data-save-j>${t("record_save")}</button></div>
+        <div>${S.entries.slice().reverse().map((x) => `<p class="entry"><time class="num">${x.at}</time>${esc(x.text)}</p>`).join("")}</div>` });
+      setTimeout(() => s.body.querySelector("[data-j]").focus(), 60);
+      s.body.querySelector("[data-save-j]").addEventListener("click", () => {
+        const v = s.body.querySelector("[data-j]").value.trim(); if (!v) return;
+        S.entries.push({ text: v, at: `${clock(elapsed)} · ${Math.round(elapsed / TOTAL * 8950).toLocaleString()} km` }); P.save(); s.close(); render(); P.toast(t("t_recorded"));
+      });
+    },
+    share() {
+      const link = "momen.travel/j/32A-ICN-CDG";
+      const s = P.sheet({ title: t("share"), body: `
+        <p class="notice__body" style="margin:-8px 0 20px">${t("share_desc")}</p>
+        <div class="qr" style="grid-template-columns:200px 1fr">${qrSvg(200)}<div class="share-link"><span>${link}</span><button class="btn btn--primary" type="button" data-copy>${t("copy_link")}</button></div></div>` });
+      s.body.querySelector("[data-copy]").addEventListener("click", () => { try { navigator.clipboard && navigator.clipboard.writeText(`https://${link}`); } catch (e) {} P.toast(t("t_copied")); });
+    },
+  };
+  stage.addEventListener("click", (e) => { const b = e.target.closest("[data-open]"); if (b && OPEN[b.dataset.open]) OPEN[b.dataset.open](); });
+
+  // QR 모양 — 보기용 패턴
+  const qrSvg = (size = 240) => {
+    let seed = 7, cells = "";
+    const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
+    const n = 25, finder = (x, y) => (x < 7 && y < 7) || (x > n - 8 && y < 7) || (x < 7 && y > n - 8);
+    for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) if (!finder(x, y) && rnd() > .5) cells += `<rect x="${x}" y="${y}" width="1" height="1"/>`;
+    const f = (x, y) => `<rect x="${x}" y="${y}" width="7" height="7"/><rect x="${x + 1}" y="${y + 1}" width="5" height="5" fill="#F4F5F6"/><rect x="${x + 2}" y="${y + 2}" width="3" height="3"/>`;
+    return `<svg viewBox="0 0 25 25" style="width:${size}px;height:${size}px" shape-rendering="crispEdges" fill="#090A0C">${cells}${f(0, 0)}${f(18, 0)}${f(0, 18)}</svg>`;
+  };
+
+  /* 플레이어 */
+  const openPlayer = (key, fromStart = false) => {
+    const m = MEDIA[key]; let pos = fromStart ? 0 : m.pos, playing = true;
+    const s = P.sheet({ full: true, body: `
+      <div class="player">
+        <img src="${img(m.img)}" alt="">
+        <div class="player__top">
+          <button class="round-btn" type="button" data-close aria-label="${t("close")}">${icon("left")}</button>
+          ${key === "psg" ? `<div class="player__score"><span class="live-dot">LIVE</span>PSG <b>1 – 0</b> LYO <span data-min class="num"></span></div>` : `<span class="card__more">${t("playing")}</span>`}
+        </div>
+        <div class="player__bottom">
+          <p class="player__kind">${m.kind}</p>
+          <h2 class="player__title">${m.title}</h2>
+          <div class="player__bar" data-bar><i data-fill></i></div>
+          <div class="player__row num"><span data-pos></span><span>${fmt2(m.dur)}</span></div>
+          <div class="player__ctrls">
+            <button class="round-btn skip" type="button" data-skip="-10">−10</button>
+            <button class="round-btn play-main" type="button" data-pp>${icon("pause")}</button>
+            <button class="round-btn skip" type="button" data-skip="10">+10</button>
+          </div>
+        </div>
+      </div>`, onClose: () => clearInterval(timer) });
+    const b = s.body;
+    const draw = () => {
+      b.querySelector("[data-fill]").style.width = `${(pos / m.dur) * 100}%`;
+      b.querySelector("[data-pos]").textContent = fmt2(pos);
+      const mn = b.querySelector("[data-min]"); if (mn) mn.textContent = `${Math.floor(pos / 60)}'`;
+    };
+    const timer = setInterval(() => { if (playing && pos < m.dur) { pos += 1; draw(); } }, 1000);
+    b.addEventListener("click", (e) => {
+      if (e.target.closest("[data-pp]")) { playing = !playing; b.querySelector("[data-pp]").innerHTML = icon(playing ? "pause" : "play"); }
+      const sk = e.target.closest("[data-skip]"); if (sk) { pos = Math.min(m.dur, Math.max(0, pos + +sk.dataset.skip)); draw(); }
+      const bar = e.target.closest("[data-bar]"); if (bar) { const r = bar.getBoundingClientRect(); pos = Math.round(((e.clientX - r.left) / r.width) * m.dur); draw(); }
+    });
+    draw();
+  };
+
+  /* 수면 화면 */
+  const sleepEl = $("[data-sleep]");
+  const goSleep = () => {
+    $("[data-sleep-clock]").textContent = clock(elapsed);
+    $("[data-sleep-sub]").textContent = `${t("wake_meal")} · ${clock(S.wakeAt)}`;
+    $("[data-wake]").textContent = t("wake_up");
+    sleepEl.classList.add("is-on"); P.toast(t("t_sleep"));
+  };
+  sleepEl.addEventListener("click", () => sleepEl.classList.remove("is-on"));
+
+  /* 상단 토글 */
+  const markToggles = () => document.querySelectorAll("[data-toggle]").forEach((b) => { const on = !!S[b.dataset.toggle]; b.classList.toggle("is-on", on); b.setAttribute("aria-pressed", String(on)); b.title = t(b.dataset.toggle === "light" ? (on ? "t_light_on" : "t_light_off") : (on ? "t_call" : "t_call_off")); });
+  stage.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-toggle]"); if (!b) return;
+    const k = b.dataset.toggle; S[k] = !S[k]; P.save(); markToggles();
+    P.toast(k === "light" ? t(S.light ? "t_light_on" : "t_light_off") : t(S.call ? "t_call" : "t_call_off"));
+  });
+
+  /* 시계 */
+  const tick = () => { $("[data-remaining]").textContent = P.hm(TOTAL - elapsed); };
+  setInterval(() => { elapsed = Math.min(TOTAL, elapsed + 1); tick(); if (S.mode === "REST") render(); }, 60000);
+
+  addEventListener("proto:lang", () => { tick(); $("[data-mode-name]").textContent = t(`name_${S.mode}`); render(); });
+
+  P.init();
+  markToggles();
+  setMode(S.mode, { quiet: true });
+})();
+</script>
+</body>
+</html>
